@@ -4,26 +4,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import cm, mm, inch
 
-class DefaultLocale(object):
-    @property
-    def month_names(self):
-        return (
-            "January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July",
-            "August",
-            "September",
-            "October",
-            "November",
-            "December"
-        )
-
-    def month_title(self, year, month):
-        return "%s %d" % (self.month_names[month - 1], year)
+from locale import *
 
 class YearCalendar(object):
     def __init__(self, year, locale=DefaultLocale()):
