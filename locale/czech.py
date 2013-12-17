@@ -19,3 +19,7 @@ class CzechLocale(DefaultLocale):
             "Listopad",
             "Prosinec"
         )
+
+    @property
+    def first_day_of_week(self):
+        return 1        
