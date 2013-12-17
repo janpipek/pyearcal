@@ -4,6 +4,8 @@ from __future__ import division
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import cm, mm, inch
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 
 from locale import *
 
@@ -18,6 +20,10 @@ class YearCalendar(object):
 
         self.max_picture_height = self.content_height / 2
         self.max_table_height = self.content_height / 3
+
+        # Register used fonts
+        pdfmetrics.registerFont(TTFont("Dejavu", "DejaVuSans.ttf"))
+        pdfmetrics.registerFont(TTFont("DejavuBold", "DejaVuSans-Bold.ttf"))
 
         self.title_font_name = "DejavuBold"
         self.title_bottom_margin = 0.5 * cm
