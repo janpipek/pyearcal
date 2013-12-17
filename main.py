@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-# import datetime
+from __future__ import division
+
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import cm, mm, inch
@@ -11,15 +12,48 @@ class YearCalendar(object):
         self.year = year
         self.locale = locale
 
+        # Page size and margins (overridable)
         self.pagesize = A4
-        self.width, self.height = self.pagesize
         self.margins = (1*cm,) * 4   # top, right, bottom, left
-        self.content_width = self.width - self.margins[1] - self.margins[3]
-        self.content_height = self.height - self.margins[0] - self.margins[2]
+
+        self.max_picture_height = self.content_height / 2
+        self.max_table_height = self.content_height / 3
+
+        self.title_font_name = "DejavuBold"
+        self.title_bottom_margin = 0.5 * cm
+        self.title_font_size = 32 #pt
+
+    @property
+    def width(self):
+        return self.pagesize[0]
+
+    @property
+    def height(self):
+        return self.pagesize[1]
+
+    @property
+    def content_width(self):
+        return self.width - self.margins[1] - self.margins[3]
+
+    @property
+    def content_height(self):
+        return self.height - self.margins[0] - self.margins[2]
+
+    @property
+    def cell_height(self):
+        return self.max_table_height / 6
+
+    @property
+    def cell_width(self):
+        return self.content_width / 7
 
     def render_month(self, month):
-        position = (1*cm, 12*cm)
-        self.canvas.drawString(position[0], position[1], self.locale.month_title(self.year, month))
+        # Render title
+        title_position = (self.margins[3], self.margins[2] + self.title_bottom_margin + self.cell_height * 6)
+        self.canvas.setFont(self.title_font_name, self.title_font_size)
+        self.canvas.drawString(title_position[0], title_position[1], self.locale.month_title(self.year, month))
+
+        # Render days
         self.canvas.showPage()
 
     def render_title_page(self):
