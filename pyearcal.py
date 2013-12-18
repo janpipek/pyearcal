@@ -2,6 +2,7 @@
 from __future__ import division
 
 from calendar import Calendar
+from datetime import date
 
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
@@ -14,9 +15,13 @@ from reportlab.platypus import Table, TableStyle
 from locale import *
 
 class YearCalendar(object):
-    def __init__(self, year, locale=DefaultLocale()):
+    def __init__(self, year, locale=DefaultLocale(), special_days=[]):
         self.year = year
         self.locale = locale
+        self.special_days = special_days
+
+        self.holidays = self.locale.holidays(self.year)
+        self._calendar = Calendar(self.locale.first_day_of_week)
 
         # Page size and margins (overridable)
         self.pagesize = A4
@@ -41,6 +46,8 @@ class YearCalendar(object):
         self.week_bgcolor = colors.white
         self.weekend_color = colors.white
         self.weekend_bgcolor = colors.Color(1.0, 0.7, 0.7)
+        self.holiday_color = self.weekend_color
+        self.holiday_bgcolor = self.weekend_bgcolor
         self.special_day_color = colors.white
         self.special_day_bgcolor = colors.blue
 
@@ -68,10 +75,26 @@ class YearCalendar(object):
     def cell_width(self):
         return self.content_width / 7
 
+    def _style_holidays_and_special_days(self, month, table_style):
+        calendar = self._calendar.monthdatescalendar(self.year, month)
+        for row, days in enumerate(calendar):
+            for column, day in enumerate(days):
+                if day.month != month:
+                    continue
+                if day.weekday() in self.locale.weekend:
+                    table_style.add("BACKGROUND", (column, row), (column, row), self.weekend_bgcolor)
+                    table_style.add("TEXTCOLOR", (column, row), (column, row), self.weekend_color)
+                if day in self.holidays:
+                    table_style.add("BACKGROUND", (column, row), (column, row), self.holiday_bgcolor)
+                    table_style.add("TEXTCOLOR", (column, row), (column, row), self.holiday_color)
+                if day in self.special_days:
+                    table_style.add("BACKGROUND", (column, row), (column, row), self.special_day_bgcolor)
+                    table_style.add("TEXTCOLOR", (column, row), (column, row), self.special_day_color)
+
     def render_month(self, month):
         # Make a data table of days
-        calendar = Calendar(self.locale.first_day_of_week)
-        table_data = calendar.monthdayscalendar(self.year, month)
+        
+        table_data = self._calendar.monthdayscalendar(self.year, month)
         table_data = [ [ day or None for day in week ] for week in table_data ]
 
         table = Table(table_data,
@@ -86,14 +109,15 @@ class YearCalendar(object):
         style.add("FONT", (0, 0), (-1, -1), self.cell_font_name, self.cell_font_size)
         style.add("ALIGN", (0, 0), (-1, -1), "RIGHT")
         style.add("VALIGN", (0, 0), (-1, -1), "MIDDLE")
-
-        style.add("BACKGROUND", (0, 0), (5, -1), self.week_bgcolor)
-        style.add("BACKGROUND", (5, 0), (-1, -1), self.weekend_bgcolor)
-
-        style.add("TEXTCOLOR", (0, 0), (5, -1), self.week_color)
-        style.add("TEXTCOLOR", (5, 0), (-1, -1), self.weekend_color)
+        style.add("BACKGROUND", (0, 0), (-1, -1), self.week_bgcolor)
+        # style.add("BACKGROUND", (5, 0), (-1, -1), self.weekend_bgcolor)
+        style.add("TEXTCOLOR", (0, 0), (-1, -1), self.week_color)
+        # style.add("TEXTCOLOR", (5, 0), (-1, -1), self.weekend_color)
+        self._style_holidays_and_special_days(month, style)
 
         table.setStyle(style)
+
+
 
         table_width, table_height = table.wrapOn(self.canvas, 7*self.cell_width, 6*self.cell_height)
         table.drawOn(self.canvas, self.margins[3], self.margins[2])
@@ -116,5 +140,6 @@ class YearCalendar(object):
         self.canvas.save()
 
 if __name__ == "__main__":
-    cal = YearCalendar(2014, CzechLocale())
+    cal = YearCalendar(2014, CzechLocale(), special_days=[ date(2014, 11, 11) ])
+    print cal.locale.first_day_of_week
     cal.render("calendar-2014.pdf")
