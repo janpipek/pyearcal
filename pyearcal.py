@@ -1,59 +1,89 @@
-#!/usr/bin/env python
 from __future__ import division
 
+import PIL
 from calendar import Calendar
-from datetime import date
-
-import os
-
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
-from reportlab.lib.units import cm, mm, inch
+from reportlab.lib.units import cm, mm
 from reportlab.lib import colors
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-import PIL
 from reportlab.platypus import Table, TableStyle, Image
-
-from locale import *
+from locale import DefaultLocale
 
 class YearCalendar(object):
-    def __init__(self, year, pictures, locale=DefaultLocale(), special_days=[]):
+    '''A year calendar.
+
+    All attributes have reasonable defaults.
+    However, they can be overridden in constructor as well as directly.
+
+    The most important method is "render" that renders the calendar
+    into a specified file.
+
+    Any font can be used, but if it is not one of the standard Adobe
+    fonts, you have to register it using "add_ttf_font". Currently, TTF 
+    is the only supported format.
+
+    Attributes:
+    - holidays: A list of datetime.date's (default: from locale)
+    - pagesize: (width, height) in points (default: A4)
+    - margins: (top, right, bottom, left) in points (default: 1.33cm)
+
+    - title_font_name: Name of a registered font (see above)
+    - title_font_size: Month title font size in pt (default 24)
+
+    '''
+
+    def __init__(self, year, pictures, locale=DefaultLocale(), special_days=[], **kwargs):
+        """Constructor with all initialization.
+
+        :param year: The year in YYYY format.
+        :param pictures: A picture source (collection with indexes 1..12).
+        :param kwargs: A dictionary of attributes to be overridden (see class description)
+        """
         self.year = year
         self.pictures = pictures
         self.locale = locale
         self.special_days = special_days
 
-        self.holidays = self.locale.holidays(self.year)
+        self.holidays = kwargs.get("holidays", self.locale.holidays(self.year))
+        self.pagesize = kwargs.get("pagesize", A4)
+        self.margins = kwargs.get("margins", (1.33*cm,) * 4)   # top, right, bottom, left
+
+        self.max_table_height = kwargs.get("max_table_height", self.content_height / 4)
+
+        # Register default fonts
+        self.add_ttf_font("Dejavu", "DejaVuSans.ttf")
+        self.add_ttf_font("DejavuBold", "DejaVuSans-Bold.ttf")
+
+        self.title_font_name = kwargs.get("title_font_name", "DejavuBold")
+        self.title_margin = kwargs.get("title_margin", 6 * mm)
+        self.title_font_size = kwargs.get("title_font_size", 24) #pt
+
+        self.cell_font_name = kwargs.get("cell_font_name", "DejavuBold")
+        self.cell_font_size = kwargs.get("cell_font_size", 16) #pt
+        self.cell_padding = kwargs.get("cell_padding", 6)
+        self.cell_spacing = kwargs.get("cell_spacing", 2 * mm)
+
+        self.week_color = kwargs.get("week_color", colors.Color(0.2, 0.2, 0.2))
+        self.week_bgcolor = kwargs.get("week_bgcolor", colors.white)
+        self.weekend_color = kwargs.get("weekend_color", colors.white)
+        self.weekend_bgcolor = kwargs.get("weekend_bgcolor", colors.Color(1.0, 0.5, 0.5))
+        self.holiday_color = kwargs.get("holiday_color", self.weekend_color)
+        self.holiday_bgcolor = kwargs.get("holiday_bgcolor", colors.Color(1.0, 0.2, 0.2))
+        self.special_day_color = kwargs.get("special_day_color", colors.white)
+        self.special_day_bgcolor = kwargs.get("special_day_bgcolor", colors.Color(0.2, 0.2, 1.0))
+
+        # Initialize calendar
         self._calendar = Calendar(self.locale.first_day_of_week)
 
-        # Page size and margins (overridable)
-        self.pagesize = A4
-        self.margins = (1.33*cm,) * 4   # top, right, bottom, left
+    def add_ttf_font(self, font_name, font_file_name):
+        '''Register TTF font to be used.
 
-        self.max_table_height = self.content_height / 4
-
-        # Register used fonts
-        pdfmetrics.registerFont(TTFont("Dejavu", "DejaVuSans.ttf"))
-        pdfmetrics.registerFont(TTFont("DejavuBold", "DejaVuSans-Bold.ttf"))
-
-        self.title_font_name = "DejavuBold"
-        self.title_margin = 6 * mm
-        self.title_font_size = 24 #pt
-
-        self.cell_font_name = "DejavuBold"
-        self.cell_font_size = 16 #pt
-        self.cell_padding = 6
-        self.cell_spacing = 2 * mm
-
-        self.week_color = colors.Color(0.2, 0.2, 0.2)
-        self.week_bgcolor = colors.white
-        self.weekend_color = colors.white
-        self.weekend_bgcolor = colors.Color(1.0, 0.5, 0.5)
-        self.holiday_color = self.weekend_color
-        self.holiday_bgcolor = colors.Color(1.0, 0.2, 0.2)
-        self.special_day_color = colors.white
-        self.special_day_bgcolor = colors.Color(0.2, 0.2, 1.0)
+        :param font_name: Name by which the font will be addressed
+        :param font_file_name: Filename of the font (reportlab will search for it.)
+        '''
+        pdfmetrics.registerFont(TTFont(font_name, font_file_name))
 
     @property
     def width(self):
@@ -65,21 +95,29 @@ class YearCalendar(object):
 
     @property
     def content_width(self):
+        '''Content width (= paper width - margins).'''
         return self.width - self.margins[1] - self.margins[3]
 
     @property
     def content_height(self):
+        '''Content height (= paper height - margins).'''
         return self.height - self.margins[0] - self.margins[2]
 
     @property
     def cell_height(self):
+        '''Height of a day cell in month calendar.'''
         return self.max_table_height / 6
 
     @property
     def cell_width(self):
+        '''Width of a day cell in month calendar.'''
         return self.content_width / 7
 
     def _style_holidays_and_special_days(self, month, table_style):
+        '''Set colours for all cells based on categories.
+
+        Categories: weekend, holidays, special days.
+        '''
         calendar = self._calendar.monthdatescalendar(self.year, month)
         for row, days in enumerate(calendar):
             for column, day in enumerate(days):
@@ -96,6 +134,10 @@ class YearCalendar(object):
                     table_style.add("TEXTCOLOR", (column, row), (column, row), self.special_day_color)
 
     def _render_picture(self, month, max_picture_height):
+        '''Draw the picture.
+
+        It is automatically scaled to fit into allowed area.
+        '''
         im = PIL.Image.open(self.pictures[month])
 
         # Rescale
@@ -113,7 +155,7 @@ class YearCalendar(object):
         image.drawOn(self.canvas, self.margins[3] + (self.content_width - width) / 2, self.margins[2] + self.content_height - height)
 
     def _render_month(self, month):
-        # Make a data table of days
+        '''Render one page with a month.'''
         
         table_data = self._calendar.monthdayscalendar(self.year, month)
         table_data = [ [ day or None for day in week ] for week in table_data ]
@@ -156,6 +198,10 @@ class YearCalendar(object):
         pass
 
     def render(self, file_name):
+        '''Render the calendar into a PDF file.
+
+        :param file_name: Path to write to.
+        '''
         self.canvas = canvas.Canvas(file_name, self.pagesize)
         self.render_title_page()
         for month in xrange(1, 13):
