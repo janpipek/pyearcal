@@ -4,7 +4,6 @@ import random
 
 class ImageDirectory(object):
     def __init__(self):  
-        self.images = {}
         self.read_images()
 
     def __getitem__(self, index):
@@ -17,6 +16,7 @@ class SortedImageDirectory(ImageDirectory):
         super(SortedImageDirectory, self).__init__()
 
     def read_images(self):
+        self.images = {}
         for index in xrange(1, 13):
             path = os.path.join(self.dirname, str(index) + self.extension)
             if os.path.exists(path):
@@ -31,6 +31,7 @@ class UnsortedImageDirectory(ImageDirectory):
         super(UnsortedImageDirectory, self).__init__()
 
     def read_images(self):
+        self.images = {}
         all_file_names = [ fn for fn in os.listdir(self.dirname) if fnmatch.fnmatch(fn, self.pattern) ]
         sampled_file_names = random.sample(all_file_names, 12)
 

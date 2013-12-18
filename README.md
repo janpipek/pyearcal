@@ -6,6 +6,7 @@ Requirements:
 * reportlab
 
 Usage:
+
 1) Prepare a directory with 12 images (different image providers are planned)
 2) Initialize calendar with all options.
 3) Render it to PDF
@@ -31,3 +32,5 @@ Example:
 
     calendar = YearCalendar(2014, image_source, locale, special_days)
     calendar.render("calendar.pdf")
+
+You can take FlickrDownloader as an inspiration for developing a more sophisticated image source.

@@ -1,11 +1,12 @@
 # Import important modules
 from pyearcal import YearCalendar
-from image_sources import UnsortedImageDirectory
+# from image_sources import UnsortedImageDirectory
 from datetime import date
 from locale import CzechLocale
+from flickr_downloader import FlickrDownloader
 
 # Use all pictures from "images" directory
-image_source = UnsortedImageDirectory("images")
+image_source = FlickrDownloader("mandelbrot")
 
 # Use Czech locale and holidays
 locale = CzechLocale()
