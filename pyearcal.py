@@ -161,17 +161,3 @@ class YearCalendar(object):
         for month in xrange(1, 13):
             self._render_month(month)
         self.canvas.save()
-
-class ImageDirectory(object):
-    def __init__(self, dirname, extension=".jpg"):
-        self.dirname = dirname
-        self.extension = extension
-
-    def __getitem__(self, index):
-        path = os.path.join(self.dirname, str(index) + self.extension)
-        return path
-
-if __name__ == "__main__":
-    cal = YearCalendar(2014, [], CzechLocale(), special_days=[ date(2014, 11, 11) ])
-    print cal.locale.first_day_of_week
-    cal.render("calendar-2014.pdf")
