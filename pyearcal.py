@@ -189,7 +189,7 @@ class YearCalendar(object):
         self.canvas.drawString(title_position[0], title_position[1], self.locale.month_title(self.year, month))
 
         # Render picture
-        self._render_picture(month, self.content_height - self.title_font_size - self.title_margin)
+        self._render_picture(month, self.content_height - self.title_font_size - 2 * self.title_margin - table_height)
         self.canvas.showPage()
 
     def render_title_page(self):

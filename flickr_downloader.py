@@ -8,7 +8,7 @@ TEMP_DIR = '.flickr-download'
 EXTENSION = '.jpg'
 
 class FlickrDownloader(SortedImageDirectory):
-    '''Image source that download random pictures from Flickr.
+    '''Image source that downloads random pictures from Flickr.
 
     Based on the article
         http://blog.art21.org/2011/09/20/how-to-use-python-to-create-a-simple-flickr-photo-glitcher
@@ -33,7 +33,7 @@ class FlickrDownloader(SortedImageDirectory):
             print 'Downloaded picture %d of %d from flickr.' % (index+1, number)
 
     def __init__(self, keyword='python'):
-        '''
+        '''        
         :param keyword: a keyword to look for on flickr.
         '''
         self.keyword = keyword
