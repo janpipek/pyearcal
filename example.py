@@ -9,7 +9,8 @@ import os
 if os.path.exists(".flickr-download"):
     image_source = SortedImageDirectory(".flickr-download")
 else:
-    image_source = FlickrDownloader("skyscraper")
+    # Download a few pictures from a nice region of Ladakh
+    image_source = FlickrDownloader("ladakh")
 
 # Use default locale and holidays
 locale = DefaultLocale()

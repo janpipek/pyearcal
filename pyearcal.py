@@ -55,7 +55,6 @@ class YearCalendar(object):
         self.year = year
         self.pictures = pictures
         self.locale = locale
-        self.scaling = scaling
         self.special_days = special_days
 
         self.scaling = kwargs.get("scaling", "squarecrop")

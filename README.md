@@ -18,7 +18,7 @@ Example:
 from pyearcal import YearCalendar
 from image_sources import UnsortedImageDirectory
 from datetime import date
-from locale import CzechLocale
+from l10n import CzechLocale
 
 # Use all pictures from "images" directory
 image_source = UnsortedImageDirectory("images")
