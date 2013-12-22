@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Import important modules
 from pyearcal import YearCalendar
 from datetime import date
