@@ -2,16 +2,17 @@ pyearcal
 ========
 Generate your year calendar in Python. The result is a PDF file with 12 pages containing an image and a grid of days.
 
-Requirements:
+### Requirements
 * reportlab
+* DejaVu fonts (if you want pyearcal work out of the box)
 
-Usage:
+### Usage
 
 1. Prepare a directory with 12 images (different image providers are planned)
 2. Initialize calendar with all options.
 3. Render it to PDF
 
-Example:
+### Example code
 
 ```python
 # Import important modules
@@ -37,6 +38,6 @@ calendar.render("calendar.pdf")
 
 You can take **FlickrDownloader** as an inspiration for developing a more sophisticated image source.
 
-Example with real pictures:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-http://pyearcal.vzdusne.cz/calendar.pdf - India Faces Calendar 2014 (80 MB)
+### Example with real pictures
+
+[India Faces Calendar 2014 (80 MB)](http://pyearcal.vzdusne.cz/calendar.pdf)
