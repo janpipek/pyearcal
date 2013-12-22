@@ -5,6 +5,7 @@ from calendar import Calendar
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import cm, mm
+from reportlab.lib.utils import ImageReader
 from reportlab.lib import colors
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
@@ -12,7 +13,7 @@ from reportlab.platypus import Table, TableStyle, Image
 from l18n import DefaultLocale
 
 class YearCalendar(object):
-    '''A year calendar.
+    '''A year calendar with 12 pages for each month.
 
     All attributes have reasonable defaults.
     However, they can be overridden in constructor as well as directly.
@@ -20,13 +21,22 @@ class YearCalendar(object):
     The most important method is "render" that renders the calendar
     into a specified file.
 
-    Any font can be used, but if it is not one of the standard Adobe
-    fonts, you have to register it using "add_ttf_font". Currently, TTF 
-    is the only supported format.
+    Fonts:
+        Any font can be used, but if it is not one of the standard Adobe
+        fonts, you have to register it using "add_ttf_font". Currently, TTF 
+        is the only supported format.
+
+    Scaling algorithms:
+        These algorithms (as scaling attribute) determine how the
+        pictures are scaled (and transformed) to fit in the desired area.
+
+        - "squarecrop" : Take square area and put a cropped picture inside
+        - "fit" : Take the largest area possible and fit the whole image inside
 
     Attributes:
     - holidays: A list of datetime.date's (default: from locale)
     - pagesize: (width, height) in points (default: A4)
+    - scaling: Scaling algorithm (default: squarecrop, see above)
     - margins: (top, right, bottom, left) in points (default: 1.33cm)
 
     - title_font_name: Name of a registered font (see above)
@@ -34,12 +44,12 @@ class YearCalendar(object):
 
     '''
 
-    def __init__(self, year, pictures, scaling="fit", 
-            locale=DefaultLocale(), special_days=[], **kwargs):
+    def __init__(self, year, pictures, locale=DefaultLocale(), special_days=[], **kwargs):
         """Constructor with all initialization.
 
         :param year: The year in YYYY format.
         :param pictures: A picture source (collection with indexes 1..12).
+        :param scaling: Algorithm for scaling pictures (default squarecrop, see)
         :param kwargs: A dictionary of attributes to be overridden (see class description)
         """
         self.year = year
@@ -48,6 +58,7 @@ class YearCalendar(object):
         self.scaling = scaling
         self.special_days = special_days
 
+        self.scaling = kwargs.get("scaling", "squarecrop")
         self.holidays = kwargs.get("holidays", self.locale.holidays(self.year))
         self.pagesize = kwargs.get("pagesize", A4)
         self.margins = kwargs.get("margins", (1.33*cm,) * 4)   # top, right, bottom, left
@@ -136,15 +147,22 @@ class YearCalendar(object):
                     table_style.add("TEXTCOLOR", (column, row), (column, row), self.special_day_color)
 
     def _scale_picture(self, image, max_picture_height):
+        '''Apply the scaling algorithm.
+
+        :param image: PIL object
+        :max_picture_height: the vertical area that can be occupied
+
+        Return tuple (transformed PIL image object, PDF width, PDF height)
+        '''
         width, height = image.size
 
         if self.scaling == "squarecrop":
             crop_size = min(width, height)
             crop_coords = (
-                (width - crop_size) / 2,
-                (height - crop_size) / 2,
-                (width + crop_size) / 2,
-                (height + crop_size) / 2
+                (width - crop_size) // 2,
+                (height - crop_size) // 2,
+                (width - crop_size) // 2 + crop_size,
+                (height - crop_size) // 2 + crop_size
             )
             cropped = image.crop(crop_coords)
 
@@ -172,9 +190,10 @@ class YearCalendar(object):
         '''
         image = PIL.Image.open(self.pictures[month])
         image, width, height = self._scale_picture(image, max_picture_height)
+        left = (self.content_width - width) / 2 + self.margins[3]
+        top = self.content_height + self.margins[0] - height
 
-        image = Image(self.pictures[month], height=height, width=width)
-        image.drawOn(self.canvas, self.margins[3] + (self.content_width - width) / 2, self.margins[2] + self.content_height - height)
+        self.canvas.drawImage(ImageReader(image), left, top, width=width, height=height)
 
     def _render_month(self, month):
         '''Render one page with a month.'''
