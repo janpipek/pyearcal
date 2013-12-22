@@ -17,9 +17,9 @@ Generate your year calendar in Python. The result is a PDF file with 12 pages co
 ```python
 # Import important modules
 from pyearcal import YearCalendar
-from image_sources import UnsortedImageDirectory
+from pyearcal.image_sources import UnsortedImageDirectory
 from datetime import date
-from l10n import CzechLocale
+from pyearcal.l10n import CzechLocale
 
 # Use all pictures from "images" directory
 image_source = UnsortedImageDirectory("images")
