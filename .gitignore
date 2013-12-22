@@ -1,5 +1,6 @@
 *.pdf
 *.pyc
-.flickr-download
+.flickr-download/
 .spyderproject
 .spyderworkspace
+images/

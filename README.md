@@ -38,5 +38,5 @@ calendar.render("calendar.pdf")
 You can take **FlickrDownloader** as an inspiration for developing a more sophisticated image source.
 
 Example with real pictures:
-===========================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 [India Faces Calendar 2014 (80 MB)](http://pyearcal.vzdusne.cz/calendar.pdf)

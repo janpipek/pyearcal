@@ -1,3 +1,14 @@
+'''font_loader module
+
+This modules enables (and automatically performs) loading
+of TTF fonts.
+
+By default, it loads some Microsoft fonts using load_standard_windows_fonts()
+and a few open-source fonts in load_standard_open_source_fonts().
+
+However, you can add your fonts using load_ttf_font().
+
+'''
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab import rl_config
@@ -29,10 +40,17 @@ defaultSuffixes = {
 }
 
 def load_ttf_font(font_name, variants):
+    '''Try to load TTF font.
+
+    :param variants: dictionary of variants and corresponding file names.
+
+    It tries to find the font in all directories reportlab looks in (+ few others).
+    It uses a few different extensions (ttf, otf, ttc + caps alternatives)
+    '''
     kwargs = {}
     for key, file_name in variants.items():
         if file_name:
-            for extension in ".ttf", ".otf", ".ttc", ".TTF":
+            for extension in ".ttf", ".otf", ".ttc", ".TTF", ".OTF", ".TTC":
                 try:
                     registered_name = _get_font_name(font_name, key)
                     # print file_name + extension
@@ -51,6 +69,11 @@ def load_ttf_font(font_name, variants):
     
 
 def _suffixify(base_name, **kwargs):
+    '''Guess variant font file names.
+
+    Uses defaultSuffixes and overrides them with supplied kwargs.
+    Returns a dictionary with file names without file extensions.
+    '''
     all_variants = {}
     all_variants.update(defaultSuffixes)
     all_variants.update(**kwargs)
@@ -60,6 +83,15 @@ def _get_font_name(font_name, variant):
     return font_name + "-" + variant
 
 def get_font_name(font_name, variant=NORMAL, require_exact=False):
+    '''Get name under which the font is registered in PDF metrics.
+
+    :param font_name: The basic name of the font (like 'Arial', ...)
+    :param variant: Variant of the file name (like 'normal', 'italic', ...)
+    :param require_exact: Use normal variant as fall-back.
+
+    Tries to find the font. If not found, it can either fallback to
+    normal variant or throw exception.
+    '''
     key = _get_font_name(font_name, variant)
     if not key in pdfmetrics.getRegisteredFontNames():
         if require_exact:
@@ -73,6 +105,7 @@ def get_font_name(font_name, variant=NORMAL, require_exact=False):
     return key
 
 def load_standard_windows_fonts():
+    '''Load fonts that normally exist in Windows / Office.'''
     load_ttf_font("Arial", _suffixify("arial", bold="bd", italicBold="bi"))
     load_ttf_font("Calibri", _suffixify("calibri"))
     load_ttf_font("Cambria", _suffixify("cambria"))
@@ -89,6 +122,7 @@ def load_standard_windows_fonts():
     load_ttf_font("Verdana", _suffixify("verdana"))
 
 def load_standard_open_source_fonts():
+    '''Load fonts that usually come with open-source software.'''
     load_ttf_font("DejaVu Sans", _suffixify("DejaVuSans", bold="-Bold",
         italic="-Oblique", italicBold="-BoldOblique"))
     load_ttf_font("DejaVu Sans Condensed", _suffixify("DejaVuSansCondensed", bold="-Bold",
