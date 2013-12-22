@@ -67,7 +67,7 @@ class YearCalendar(object):
 
         self.max_table_height = kwargs.get("max_table_height", self.content_height / 4)
 
-        self.title_font_name = kwargs.get("title_font_name", "Cambria")
+        self.title_font_name = kwargs.get("title_font_name", "DejaVu Sans")
         self.title_font_variant = kwargs.get("title_font_variant", font_loader.BOLD)
         self.title_margin = kwargs.get("title_margin", 6 * mm)
         self.title_font_size = kwargs.get("title_font_size", 24) #pt

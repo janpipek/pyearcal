@@ -1,5 +1,9 @@
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+from reportlab import rl_config
+
+import os
+import glob
 
 BOLD = "bold"
 LIGHT = "light"
@@ -8,8 +12,11 @@ ITALIC = "italic"
 ITALIC_BOLD = "italicBold"
 NORMAL = "normal"
 
+# Aliases
 BOOK = NORMAL
+REGULAR = NORMAL
 OBLIQUE = ITALIC
+BOLD_ITALIC = ITALIC_BOLD
 
 defaultSuffixes = {
     NORMAL : "",
@@ -21,18 +28,23 @@ defaultSuffixes = {
 }
 
 def load_ttf_font(font_name, variants):
+    kwargs = {}
     for key, file_name in variants.items():
         if file_name:
             for extension in ".ttf", ".otf", ".ttc", ".TTF":
                 try:
                     registered_name = _get_font_name(font_name, key)
+                    # print file_name + extension
                     pdfmetrics.registerFont(TTFont(registered_name, file_name + extension))
                     kwargs[key] = registered_name
                     break
-                except:
+                except Exception as e:
+                    # print e
                     pass
     try:
-        pdfmetrics.registerFontFamily(font_name, **kwargs)
+        if len(kwargs):
+            print "Font '%s' found (%s)" % (font_name, ", ".join(kwargs.keys()))
+            pdfmetrics.registerFontFamily(font_name, **kwargs)
     except:
         pass
     
@@ -88,12 +100,21 @@ def load_standard_open_source_fonts():
         italic="I", italicBold="BI"))
     load_ttf_font("Gentium Book Basic", _suffixify("GenBkBas", normal="R", bold="B",
         italic="I", italicBold="BI"))
+    load_ttf_font("Liberation Sans", _suffixify("LiberationSans", normal="-Regular", bold="-Bold",
+        italic="-Italic", italicBold="-BoldItalic"))    
+    load_ttf_font("Liberation Serif", _suffixify("LiberationSerif", normal="-Regular", bold="-Bold",
+        italic="-Italic", italicBold="-BoldItalic"))             
+    load_ttf_font("STIX", _suffixify("STIX", normal="-Regular", bold="-Bold",
+        italic="-Italic", italicBold="-BoldItalic"))    
+
+# Hack to browse through all directories in /usr/share/fonts
+if os.name == "posix":
+    all_dirs = []
+    font_dirs = [ "/usr/share/fonts/" ]
+    for font_dir in font_dirs:
+        for current, dirs, _ in os.walk(font_dir):
+            all_dirs += [ os.path.join(current, d) for d in dirs ]
+    rl_config.TTFSearchPath = tuple(rl_config.TTFSearchPath + all_dirs)
 
 load_standard_windows_fonts()
 load_standard_open_source_fonts()
-
-print "Registered %d font variants:" % len(pdfmetrics.getRegisteredFontNames())
-print "-----------------"
-for font in pdfmetrics.getRegisteredFontNames():
-    print font
-print "-----------------"
