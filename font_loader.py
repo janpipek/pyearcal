@@ -5,6 +5,7 @@ from reportlab import rl_config
 import os
 import glob
 
+# Define font variant names
 BOLD = "bold"
 LIGHT = "light"
 LIGHT_ITALIC = "lightItalic"
