@@ -34,7 +34,8 @@ class YearCalendar(object):
 
     '''
 
-    def __init__(self, year, pictures, locale=DefaultLocale(), special_days=[], **kwargs):
+    def __init__(self, year, pictures, scaling="fit", 
+            locale=DefaultLocale(), special_days=[], **kwargs):
         """Constructor with all initialization.
 
         :param year: The year in YYYY format.
@@ -44,6 +45,7 @@ class YearCalendar(object):
         self.year = year
         self.pictures = pictures
         self.locale = locale
+        self.scaling = scaling
         self.special_days = special_days
 
         self.holidays = kwargs.get("holidays", self.locale.holidays(self.year))
@@ -133,23 +135,43 @@ class YearCalendar(object):
                     table_style.add("BACKGROUND", (column, row), (column, row), self.special_day_bgcolor)
                     table_style.add("TEXTCOLOR", (column, row), (column, row), self.special_day_color)
 
+    def _scale_picture(self, image, max_picture_height):
+        width, height = image.size
+
+        if self.scaling == "squarecrop":
+            crop_size = min(width, height)
+            crop_coords = (
+                (width - crop_size) / 2,
+                (height - crop_size) / 2,
+                (width + crop_size) / 2,
+                (height + crop_size) / 2
+            )
+            cropped = image.crop(crop_coords)
+
+            size = min(self.content_width, max_picture_height)
+            return cropped, size, size
+
+        elif self.scaling == "fit":
+            max_width = self.content_width
+            max_height = max_picture_height
+            if width * max_height > height * max_width:
+                height = max_width * height / width
+                width = max_width
+            else:
+                width = max_height * width / height
+                height = max_height
+            return image, width, height
+
+        else:
+            raise Exception("Unknown scaling: %s" % self.scaling)
+
     def _render_picture(self, month, max_picture_height):
         '''Draw the picture.
 
-        It is automatically scaled to fit into allowed area.
+        It is automatically scaled using the selected algorithm.
         '''
-        im = PIL.Image.open(self.pictures[month])
-
-        # Rescale
-        (width, height) = im.size
-        max_width = self.content_width
-        max_height = max_picture_height
-        if width * max_height > height * max_width:
-            height = max_width * height / width
-            width = max_width
-        else:
-            width = max_height * width / height
-            height = max_height
+        image = PIL.Image.open(self.pictures[month])
+        image, width, height = self._scale_picture(image, max_picture_height)
 
         image = Image(self.pictures[month], height=height, width=width)
         image.drawOn(self.canvas, self.margins[3] + (self.content_width - width) / 2, self.margins[2] + self.content_height - height)
