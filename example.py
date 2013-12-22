@@ -1,9 +1,9 @@
 # Import important modules
 from pyearcal import YearCalendar
 from datetime import date
-from l18n import DefaultLocale
-from flickr_downloader import FlickrDownloader
-from image_sources import SortedImageDirectory
+from pyearcal.l10n import DefaultLocale
+from pyearcal.flickr_downloader import FlickrDownloader
+from pyearcal.image_sources import SortedImageDirectory
 import os
 
 if os.path.exists(".flickr-download"):
