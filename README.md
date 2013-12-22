@@ -39,4 +39,4 @@ You can take **FlickrDownloader** as an inspiration for developing a more sophis
 
 Example with real pictures:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-[India Faces Calendar 2014 (80 MB)](http://pyearcal.vzdusne.cz/calendar.pdf)
+http://pyearcal.vzdusne.cz/calendar.pdf - India Faces Calendar 2014 (80 MB)
