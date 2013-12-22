@@ -12,6 +12,8 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import Table, TableStyle, Image
 from l18n import DefaultLocale
 
+import font_loader
+
 class YearCalendar(object):
     '''A year calendar with 12 pages for each month.
 
@@ -22,9 +24,9 @@ class YearCalendar(object):
     into a specified file.
 
     Fonts:
-        Any font can be used, but if it is not one of the standard Adobe
-        fonts, you have to register it using "add_ttf_font". Currently, TTF 
-        is the only supported format.
+        Any font can be used. Reportlab by default uses Adobe fonts.
+        Module font_loader however tries to import as many system fonts (TTF)
+        as possible (see there). You can register your own fonts as well.
 
     Scaling algorithms:
         These algorithms (as scaling attribute) determine how the
@@ -41,6 +43,7 @@ class YearCalendar(object):
 
     - title_font_name: Name of a registered font (see above)
     - title_font_size: Month title font size in pt (default 24)
+    - title_font_variant: Month title font variant (see font_loader)
 
     '''
 
@@ -64,15 +67,13 @@ class YearCalendar(object):
 
         self.max_table_height = kwargs.get("max_table_height", self.content_height / 4)
 
-        # Register default fonts
-        self.add_ttf_font("Dejavu", "DejaVuSans.ttf")
-        self.add_ttf_font("DejavuBold", "DejaVuSans-Bold.ttf")
-
-        self.title_font_name = kwargs.get("title_font_name", "DejavuBold")
+        self.title_font_name = kwargs.get("title_font_name", "Cambria")
+        self.title_font_variant = kwargs.get("title_font_variant", font_loader.BOLD)
         self.title_margin = kwargs.get("title_margin", 6 * mm)
         self.title_font_size = kwargs.get("title_font_size", 24) #pt
 
-        self.cell_font_name = kwargs.get("cell_font_name", "DejavuBold")
+        self.cell_font_name = kwargs.get("cell_font_name", "DejaVu Sans")
+        self.cell_font_variant = kwargs.get("cell_font_variant", font_loader.OBLIQUE)
         self.cell_font_size = kwargs.get("cell_font_size", 16) #pt
         self.cell_padding = kwargs.get("cell_padding", 6)
         self.cell_spacing = kwargs.get("cell_spacing", 2 * mm)
@@ -88,14 +89,6 @@ class YearCalendar(object):
 
         # Initialize calendar
         self._calendar = Calendar(self.locale.first_day_of_week)
-
-    def add_ttf_font(self, font_name, font_file_name):
-        '''Register TTF font to be used.
-
-        :param font_name: Name by which the font will be addressed
-        :param font_file_name: Filename of the font (reportlab will search for it.)
-        '''
-        pdfmetrics.registerFont(TTFont(font_name, font_file_name))
 
     @property
     def width(self):
@@ -124,6 +117,10 @@ class YearCalendar(object):
     def cell_width(self):
         '''Width of a day cell in month calendar.'''
         return self.content_width / 7
+
+    def set_font(self, name, size=12, variant="normal"):
+        font = font_loader.get_font_name(name, variant)
+        self.canvas.setFont(font, size)
 
     def _style_holidays_and_special_days(self, month, table_style):
         '''Set colours for all cells based on categories.
@@ -211,7 +208,8 @@ class YearCalendar(object):
         for position in ("BEFORE", "AFTER", "ABOVE", "BELOW"):
             style.add("LINE" + position, (0, 0), (-1, -1), self.cell_spacing / 2, colors.white)
 
-        style.add("FONT", (0, 0), (-1, -1), self.cell_font_name, self.cell_font_size)
+        font_name = font_loader.get_font_name(self.cell_font_name, self.cell_font_variant)
+        style.add("FONT", (0, 0), (-1, -1), font_name, self.cell_font_size)
         style.add("ALIGN", (0, 0), (-1, -1), "RIGHT")
         style.add("VALIGN", (0, 0), (-1, -1), "MIDDLE")
         style.add("BACKGROUND", (0, 0), (-1, -1), self.week_bgcolor)
@@ -225,7 +223,7 @@ class YearCalendar(object):
         
         # Render title
         title_position = (self.margins[3], self.margins[2] + table_height + self.title_margin)
-        self.canvas.setFont(self.title_font_name, self.title_font_size)
+        self.set_font(self.title_font_name, self.title_font_size, variant=self.title_font_variant)
         self.canvas.drawString(title_position[0], title_position[1], self.locale.month_title(self.year, month))
 
         # Render picture
