@@ -9,7 +9,7 @@ from reportlab.lib import colors
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import Table, TableStyle, Image
-from locale import DefaultLocale
+from l18n import DefaultLocale
 
 class YearCalendar(object):
     '''A year calendar.
