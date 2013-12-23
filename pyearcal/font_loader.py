@@ -10,7 +10,7 @@ However, you can add your fonts using load_ttf_font().
 
 '''
 from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfbase.ttfonts import TTFont, TTFError
 from reportlab import rl_config
 
 import os
@@ -57,6 +57,9 @@ def load_ttf_font(font_name, variants):
                     pdfmetrics.registerFont(TTFont(registered_name, file_name + extension))
                     kwargs[key] = registered_name
                     break
+                except TTFError as e:
+                    if 'postscript outlines are not supported' in e.message:
+                        print e
                 except Exception as e:
                     # print e
                     pass
@@ -131,7 +134,8 @@ def load_standard_open_source_fonts():
         italic="-Oblique", italicBold="-BoldOblique"))
     load_ttf_font("DejaVu Serif Condensed", _suffixify("DejaVuSerifCondensed", bold="-Bold",
         italic="-Oblique", italicBold="-BoldOblique"))
-    load_ttf_font("Gentium Basic", _suffixify("GenBas", normal="R", bold="B",
+    load_ttf_font("Gentium", _suffixify("Gen", normal="R102", italic="I102"))
+    load_ttf_font("Gentium Basic",_suffixify("GenBas", normal="R", bold="B",
         italic="I", italicBold="BI"))
     load_ttf_font("Gentium Book Basic", _suffixify("GenBkBas", normal="R", bold="B",
         italic="I", italicBold="BI"))
@@ -141,15 +145,21 @@ def load_standard_open_source_fonts():
         italic="-Italic", italicBold="-BoldItalic"))             
     load_ttf_font("STIX", _suffixify("STIX", normal="-Regular", bold="-Bold",
         italic="-Italic", italicBold="-BoldItalic"))    
+    load_ttf_font("Cantarell", _suffixify("Cantarell", normal="-Regular", bold="-Bold"))
+
+def add_font_directory(directory, walk=True):
+    directory = os.path.expanduser(directory)
+    all_dirs = [ directory ]
+    if walk:
+        for current, dirs, _ in os.walk(directory):
+            all_dirs += [ os.path.join(current, d) for d in dirs ]
+    rl_config.TTFSearchPath = tuple(list(rl_config.TTFSearchPath) + all_dirs)
+    print rl_config.TTFSearchPath
+
 
 # Hack to browse through all directories in /usr/share/fonts
 if os.name == "posix":
-    all_dirs = []
-    font_dirs = [ "/usr/share/fonts/" ]
-    for font_dir in font_dirs:
-        for current, dirs, _ in os.walk(font_dir):
-            all_dirs += [ os.path.join(current, d) for d in dirs ]
-    rl_config.TTFSearchPath = tuple(rl_config.TTFSearchPath + all_dirs)
+    add_font_directory("/usr/share/fonts", True)       
 
 load_standard_windows_fonts()
 load_standard_open_source_fonts()
