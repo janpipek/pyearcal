@@ -12,7 +12,7 @@ options = dict(
     author='Jan Pipek',
     author_email='jan.pipek@gmail.com',
     url='https://github.com/janpipek/pyearcal',
-    install_requires = ['reportlab'],
+    install_requires = ['reportlab', 'PIL', 'dateutil'],
     extras_require = {
         'flickr' : ['beautifulsoup']
     }
