@@ -1,6 +1,8 @@
 *.pdf
 *.pyc
+*.egg-info
 .flickr-download/
+dist/
 .spyderproject
+.idea
 .spyderworkspace
-images/

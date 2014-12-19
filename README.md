@@ -5,6 +5,8 @@ Generate your year calendar in Python. The result is a PDF file with 12 pages co
 ### Requirements
 * reportlab
 * DejaVu fonts (if you want pyearcal work out of the box)
+* BeautifulSoup (optional)
+* Python 2.7
 
 ### Usage
 
