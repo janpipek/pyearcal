@@ -6,7 +6,7 @@ Generate your year calendar in Python. The result is a PDF file with 12 pages co
 * reportlab
 * DejaVu fonts (if you want pyearcal work out of the box)
 * BeautifulSoup (optional)
-* Python 2.7
+* Python 3.4+ (download version 0.2 for Python 2.7 support)
 
 ### Usage
 
@@ -34,7 +34,7 @@ special_days = [
     date(2014, 1, 31) # Guido van Rossum's birthday
 ]
 
-calendar = YearCalendar(2014, image_source, locale, special_days)
+calendar = YearCalendar(2016, image_source, locale, special_days)
 calendar.render("calendar.pdf")
 ```
 
