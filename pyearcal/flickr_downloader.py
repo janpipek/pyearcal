@@ -1,7 +1,7 @@
 import urllib2
 import random
 import os
-from image_sources import SortedImageDirectory
+from .image_sources import SortedImageDirectory
 from BeautifulSoup import BeautifulStoneSoup
 
 TEMP_DIR = '.flickr-download'
@@ -30,7 +30,7 @@ class FlickrDownloader(SortedImageDirectory):
             with open(os.path.join(TEMP_DIR, '%d%s' % (index+1, EXTENSION)), 'wb') as output_file:
                 output_file.write(response.read())
             response.close()
-            print 'Downloaded picture %d of %d from flickr.' % (index+1, number)
+            print('Downloaded picture %d of %d from flickr.' % (index+1, number))
 
     def __init__(self, keyword='python'):
         '''        

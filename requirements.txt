@@ -1,4 +1,3 @@
 reportlab
 BeautifulSoup   # For FlickDownloader
 dateutil
-PIL

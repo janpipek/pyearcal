@@ -14,7 +14,6 @@ from reportlab.pdfbase.ttfonts import TTFont, TTFError
 from reportlab import rl_config
 
 import os
-import glob
 
 # Define font variant names
 BOLD = "bold"
@@ -58,14 +57,15 @@ def load_ttf_font(font_name, variants):
                     kwargs[key] = registered_name
                     break
                 except TTFError as e:
-                    if 'postscript outlines are not supported' in e.message:
-                        print e
+                    # if 'postscript outlines are not supported' in e.:
+                    #     print(e)
+                    pass
                 except Exception as e:
                     # print e
                     pass
     try:
         if len(kwargs):
-            print "Font '%s' found (%s)" % (font_name, ", ".join(kwargs.keys()))
+            print("Font '%s' found (%s)" % (font_name, ", ".join(kwargs.keys())))
             pdfmetrics.registerFontFamily(font_name, **kwargs)
     except:
         pass
@@ -104,7 +104,7 @@ def get_font_name(font_name, variant=NORMAL, require_exact=False):
             if not key in pdfmetrics.getRegisteredFontNames():
                 raise Exception("Font '%s' does not exist." % (font_name))
             else:
-                print "Font '%s', variant '%s' does not exist, using 'normal' instead." % (font_name, variant)
+                print("Font '%s', variant '%s' does not exist, using 'normal' instead." % (font_name, variant))
     return key
 
 def load_standard_windows_fonts():
@@ -154,7 +154,7 @@ def add_font_directory(directory, walk=True):
         for current, dirs, _ in os.walk(directory):
             all_dirs += [ os.path.join(current, d) for d in dirs ]
     rl_config.TTFSearchPath = tuple(list(rl_config.TTFSearchPath) + all_dirs)
-    print rl_config.TTFSearchPath
+    # print(rl_config.TTFSearchPath)
 
 
 # Hack to browse through all directories in /usr/share/fonts

@@ -1,5 +1,6 @@
 import calendar
 
+
 class DefaultLocale(object):
     '''Default calendar.
 

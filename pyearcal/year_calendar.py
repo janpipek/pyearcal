@@ -10,9 +10,9 @@ from reportlab.lib import colors
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import Table, TableStyle, Image
-from l10n import DefaultLocale
+from .l10n import DefaultLocale
 
-import font_loader
+from . import font_loader
 
 class YearCalendar(object):
     '''A year calendar with 12 pages for each month.

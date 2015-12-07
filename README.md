@@ -5,10 +5,11 @@ pyearcal
 Generate your year calendar in Python. The result is a PDF file with 12 pages containing an image and a grid of days.
 
 ### Requirements
+* pillow or PIL
 * reportlab
 * DejaVu fonts (if you want pyearcal work out of the box)
 * BeautifulSoup (optional)
-* Python 3.4+ (download version 0.2 for Python 2.7 support)
+* Python 2.7?, 3.4+ (version <=0.2 only Python 2.7 support)
 
 ### Usage
 

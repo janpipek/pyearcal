@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from default import DefaultLocale
+from .default import DefaultLocale
 from dateutil.easter import easter
 from datetime import date, timedelta
 import calendar
+
 
 class CzechLocale(DefaultLocale):
     @property

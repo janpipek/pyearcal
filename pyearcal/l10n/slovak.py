@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from default import DefaultLocale
+from .default import DefaultLocale
 from dateutil.easter import easter
 from datetime import date, timedelta
 import calendar
+
 
 class SlovakLocale(DefaultLocale):
     @property
@@ -24,8 +25,8 @@ class SlovakLocale(DefaultLocale):
 
     @property
     def first_day_of_week(self):
-        return calendar.MONDAY   
-        
+        return calendar.MONDAY
+
     def holidays(self, year):
         hols = super(SlovakLocale, self).holidays(year)
         hols.append(date(year, 1, 1))
@@ -41,7 +42,7 @@ class SlovakLocale(DefaultLocale):
         hols.append(date(year, 12, 24))
         hols.append(date(year, 12, 25))
         hols.append(date(year, 12, 26))
-        
-        hols.append( easter(year) + timedelta(days=-2))
-        hols.append( easter(year) + timedelta(days=1))
+
+        hols.append(easter(year) + timedelta(days=-2))
+        hols.append(easter(year) + timedelta(days=1))
         return hols

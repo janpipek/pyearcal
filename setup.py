@@ -4,7 +4,7 @@ import itertools
 
 options = dict(
     name='pyearcal',
-    version='0.2.0',
+    version='0.3.0',
     packages=find_packages(),
     license='MIT',
     description='Year calendar creation in Python',
@@ -12,7 +12,7 @@ options = dict(
     author='Jan Pipek',
     author_email='jan.pipek@gmail.com',
     url='https://github.com/janpipek/pyearcal',
-    install_requires = ['reportlab', 'PIL', 'dateutil'],
+    install_requires = ['reportlab', 'pillow', 'python-dateutil'],
     extras_require = {
         'flickr' : ['beautifulsoup']
     }
