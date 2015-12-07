@@ -42,6 +42,6 @@ class CzechLocale(DefaultLocale):
         hols.append(date(year, 12, 26))
 
         hols.append( easter(year) + timedelta(days=1))
-        if year >= 2015:
+        if year >= 2016:
             hols.append( easter(year) + timedelta(days=-2))
         return hols
