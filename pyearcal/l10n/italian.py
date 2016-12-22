@@ -99,3 +99,7 @@ class ItalianLocale(DefaultLocale):
             # Pentecoste (in Alto Adige / Südtirol)
             hols.append(easter(year) + timedelta(days=50))
         return hols
+
+    @property
+    def calendar_name(self):
+        return "Calendario"

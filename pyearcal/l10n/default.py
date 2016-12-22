@@ -36,3 +36,7 @@ class DefaultLocale(object):
 
     def holidays(self, year):
         return []
+
+    @property
+    def calendar_name(self):
+        return "Calendar"

@@ -261,7 +261,8 @@ class YearCalendar(object):
         :param file_name: Path to write to.
         '''
         self.canvas = canvas.Canvas(file_name, self.pagesize)
-        self.render_title_page()
+        self.canvas.setTitle("{0} {1}".format(self.locale.calendar_name, self.year))
+        self.render_title_page()   # TODO: To be implemented
         for month in range(1, 13):
             self._render_month(month)
         self.canvas.save()

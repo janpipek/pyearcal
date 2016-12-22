@@ -46,3 +46,7 @@ class SlovakLocale(DefaultLocale):
         hols.append(easter(year) + timedelta(days=-2))
         hols.append(easter(year) + timedelta(days=1))
         return hols
+
+    @property
+    def calendar_name(self):
+        return "Kalendár"

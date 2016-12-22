@@ -45,3 +45,7 @@ class CzechLocale(DefaultLocale):
         if year >= 2016:
             hols.append( easter(year) + timedelta(days=-2))
         return hols
+
+    @property
+    def calendar_name(self):
+        return "Kalendář"
