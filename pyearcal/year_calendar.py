@@ -90,6 +90,26 @@ class YearCalendar(object):
         # Initialize calendar
         self._calendar = Calendar(self.locale.first_day_of_week)
 
+    def _repr_html_(self):
+        """HTML representation, useful for IPython notebook."""
+        from io import BytesIO
+        from base64 import b64encode
+        html = "<div>"
+        html += "<div style='font-size:124%'>Calendar for year {0}</div>".format(self.year)
+        html += "<div>"
+        thumb_size = 64
+        for i, image in enumerate(self.pictures):
+            pil_im = PIL.Image.open(image)
+            pil_im = self._scale_picture(pil_im, 1)[0]
+            pil_im.thumbnail((thumb_size, thumb_size))
+            b = BytesIO()
+            pil_im.save(b, format='png')
+            image_data = b64encode(b.getvalue()).decode('utf-8')
+            html += "<img style='display:inline-block; margin:1px' alt='{0}' src='data:image/png;base64,{1}'/>".format(i, image_data)
+        html += "</div>"
+        html += "</div>"
+        return html
+
     @property
     def width(self):
         return self.pagesize[0]
@@ -242,6 +262,6 @@ class YearCalendar(object):
         '''
         self.canvas = canvas.Canvas(file_name, self.pagesize)
         self.render_title_page()
-        for month in xrange(1, 13):
+        for month in range(1, 13):
             self._render_month(month)
         self.canvas.save()
