@@ -67,8 +67,9 @@ def load_ttf_font(font_name, variants):
         if len(kwargs):
             print("Font '%s' found (%s)" % (font_name, ", ".join(kwargs.keys())))
             pdfmetrics.registerFontFamily(font_name, **kwargs)
+            return True
     except:
-        pass
+        return False
     
 
 def _suffixify(base_name, **kwargs):
@@ -106,6 +107,13 @@ def get_font_name(font_name, variant=NORMAL, require_exact=False):
             else:
                 print("Font '%s', variant '%s' does not exist, using 'normal' instead." % (font_name, variant))
     return key
+
+def get_loaded_fonts():
+    '''List all loaded fonts.
+
+    :rtype: list
+    '''
+    return pdfmetrics.getRegisteredFontNames()
 
 def load_standard_windows_fonts():
     '''Load fonts that normally exist in Windows / Office.'''
@@ -159,7 +167,9 @@ def add_font_directory(directory, walk=True):
 
 # Hack to browse through all directories in /usr/share/fonts
 if os.name == "posix":
-    add_font_directory("/usr/share/fonts", True)       
+    add_font_directory("/usr/share/fonts", True)
+
+add_font_directory(".")
 
 load_standard_windows_fonts()
 load_standard_open_source_fonts()
