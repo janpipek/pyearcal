@@ -15,6 +15,9 @@ Generate your year calendar in Python. The result is a PDF file with 12 pages co
 
 1. Prepare a directory with 12 images (different image providers are planned)
 2. Initialize calendar with all options.
+    * Language (locales for English, Czech, Slovak, Italian)
+    * Special days (national holidays are included + add your own)
+    * Fonts, colours
 3. Render it to PDF
 
 ### Example code
@@ -26,6 +29,8 @@ from pyearcal.image_sources import UnsortedImageDirectory
 from datetime import date
 from pyearcal.l10n import CzechLocale
 
+year = date.today().year + 1
+
 # Use all pictures from "images" directory
 image_source = UnsortedImageDirectory("images")
 
@@ -34,10 +39,10 @@ locale = CzechLocale()
 
 # Set a few special days
 special_days = [
-    date(2014, 1, 31) # Guido van Rossum's birthday
+    date(year, 1, 31) # Guido van Rossum's birthday
 ]
 
-calendar = YearCalendar(2016, image_source, locale, special_days)
+calendar = YearCalendar(year, image_source, locale, special_days)
 calendar.render("calendar.pdf")
 ```
 
