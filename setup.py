@@ -14,7 +14,7 @@ options = dict(
     url='https://github.com/janpipek/pyearcal',
     install_requires = ['reportlab', 'pillow', 'python-dateutil'],
     extras_require = {
-        'flickr' : ['beautifulsoup']
+        'flickr' : ['beautifulsoup4', 'requests']
     }
     # entry_points = {
     #     'console_scripts' : [

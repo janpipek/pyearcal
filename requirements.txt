@@ -1,3 +1,4 @@
 reportlab
-BeautifulSoup   # For FlickDownloader
-dateutil
+BeautifulSoup4   # For FlickDownloader
+requests  # For FlickDownloader
+python-dateutil
