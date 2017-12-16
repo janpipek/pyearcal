@@ -9,11 +9,11 @@ and a few open-source fonts in load_standard_open_source_fonts().
 However, you can add your fonts using load_ttf_font().
 
 '''
+import os
+
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont, TTFError
 from reportlab import rl_config
-
-import os
 
 # Define font variant names
 BOLD = "bold"
@@ -38,7 +38,7 @@ defaultSuffixes = {
     LIGHT_ITALIC : "li"
 }
 
-def load_ttf_font(font_name, variants):
+def load_ttf_font(font_name, variants, verbose=False):
     '''Try to load TTF font.
 
     :param variants: dictionary of variants and corresponding file names.
@@ -65,7 +65,8 @@ def load_ttf_font(font_name, variants):
                     pass
     try:
         if len(kwargs):
-            print("Font '%s' found (%s)" % (font_name, ", ".join(kwargs.keys())))
+            if verbose:
+                print("Font '%s' found (%s)" % (font_name, ", ".join(kwargs.keys())))
             pdfmetrics.registerFontFamily(font_name, **kwargs)
             return True
     except:

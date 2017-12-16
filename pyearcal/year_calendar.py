@@ -73,7 +73,7 @@ class YearCalendar(object):
         self.title_font_size = kwargs.get("title_font_size", 24) #pt
 
         self.cell_font_name = kwargs.get("cell_font_name", "DejaVu Sans")
-        self.cell_font_variant = kwargs.get("cell_font_variant", font_loader.OBLIQUE)
+        self.cell_font_variant = kwargs.get("cell_font_variant", font_loader.NORMAL)
         self.cell_font_size = kwargs.get("cell_font_size", 16) #pt
         self.cell_padding = kwargs.get("cell_padding", 6)
         self.cell_spacing = kwargs.get("cell_spacing", 2 * mm)
@@ -264,5 +264,6 @@ class YearCalendar(object):
         self.canvas.setTitle("{0} {1}".format(self.locale.calendar_name, self.year))
         self.render_title_page()   # TODO: To be implemented
         for month in range(1, 13):
+            print("Page {0} rendered.".format(month))
             self._render_month(month)
         self.canvas.save()
