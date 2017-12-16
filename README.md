@@ -48,6 +48,19 @@ calendar.render("calendar.pdf")
 
 You can take **FlickrDownloader** as an inspiration for developing a more sophisticated image source.
 
+### Usage of the script
+
+```
+Usage: pyearcal [OPTIONS] [OUTPUT]
+
+Options:
+  -s, --source PATH
+  -l, --locale [en|cs|it|sk]
+  -y, --year INTEGER
+  -f, --font TEXT
+  -d, --special-days TEXT
+  ```
+
 ### Example with real pictures
 
 [India Faces Calendar 2014 (80 MB)](http://pyearcal.vzdusne.cz/calendar.pdf)
