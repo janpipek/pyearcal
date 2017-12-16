@@ -4,7 +4,7 @@ import itertools
 
 options = dict(
     name='pyearcal',
-    version='0.3.1',
+    version='0.3.2',
     packages=find_packages(),
     license='MIT',
     description='Year calendar creation in Python',
