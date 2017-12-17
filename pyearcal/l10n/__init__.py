@@ -6,7 +6,7 @@ from .italian import ItalianLocale
 
 
 def get_locale(locale):
-    if locale == "us":
+    if locale == "en":
         return DefaultLocale()
     elif locale == "cs":
         return CzechLocale()

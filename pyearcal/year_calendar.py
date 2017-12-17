@@ -45,6 +45,8 @@ class YearCalendar(object):
     - title_font_size: Month title font size in pt (default 24)
     - title_font_variant: Month title font variant (see font_loader)
 
+    - include_year_in_month_name
+
     '''
 
     def __init__(self, year, pictures, locale=DefaultLocale(), special_days=[], **kwargs):
@@ -81,11 +83,13 @@ class YearCalendar(object):
         self.week_color = kwargs.get("week_color", colors.Color(0.2, 0.2, 0.2))
         self.week_bgcolor = kwargs.get("week_bgcolor", colors.white)
         self.weekend_color = kwargs.get("weekend_color", colors.white)
-        self.weekend_bgcolor = kwargs.get("weekend_bgcolor", colors.Color(1.0, 0.5, 0.5))
+        self.weekend_bgcolor = kwargs.get("weekend_bgcolor", colors.Color(0.7, 0.7, 0.7))
         self.holiday_color = kwargs.get("holiday_color", self.weekend_color)
-        self.holiday_bgcolor = kwargs.get("holiday_bgcolor", colors.Color(1.0, 0.2, 0.2))
+        self.holiday_bgcolor = kwargs.get("holiday_bgcolor", colors.Color(0.4, 0.4, 0.4))
         self.special_day_color = kwargs.get("special_day_color", colors.white)
-        self.special_day_bgcolor = kwargs.get("special_day_bgcolor", colors.Color(0.2, 0.2, 1.0))
+        self.special_day_bgcolor = kwargs.get("special_day_bgcolor", colors.Color(0.2, 0.2, 0.2))
+
+        self.include_year_in_month_name = kwargs.get("include_year_in_month_name", False)
 
         # Initialize calendar
         self._calendar = Calendar(self.locale.first_day_of_week)
@@ -244,7 +248,7 @@ class YearCalendar(object):
         # Render title
         title_position = (self.margins[3], self.margins[2] + table_height + self.title_margin)
         self.set_font(self.title_font_name, self.title_font_size, variant=self.title_font_variant)
-        self.canvas.drawString(title_position[0], title_position[1], self.locale.month_title(self.year, month))
+        self.canvas.drawString(title_position[0], title_position[1], self.locale.month_title(self.year, month, self.include_year_in_month_name))
 
         # Render picture
         self._render_picture(month, self.content_height - self.title_font_size - 2 * self.title_margin - table_height)

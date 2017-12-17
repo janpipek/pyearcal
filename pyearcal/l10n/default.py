@@ -23,8 +23,11 @@ class DefaultLocale(object):
             "December"
         )
 
-    def month_title(self, year, month):
-        return "%s %d" % (self.month_names[month - 1], year)
+    def month_title(self, year, month, include_year):
+        if include_year:
+            return "%s %d" % (self.month_names[month - 1], year)
+        else:
+            return self.month_names[month - 1]
 
     @property
     def first_day_of_week(self):
