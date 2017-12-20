@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 TEMP_DIR = '.flickr-download'
 EXTENSION = '.jpg'
 
+
 class FlickrDownloader(SortedImageDirectory):
     '''Image source that downloads random pictures from Flickr.
 

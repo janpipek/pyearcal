@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-from setuptools import setup, find_packages
 import itertools
+from setuptools import setup, find_packages
 
 options = dict(
     name='pyearcal',

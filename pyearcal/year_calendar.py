@@ -1,17 +1,16 @@
-from __future__ import division
+from __future__ import division, absolute_import
+
+from calendar import Calendar
 
 import PIL
-from calendar import Calendar
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import cm, mm
 from reportlab.lib.utils import ImageReader
 from reportlab.lib import colors
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.platypus import Table, TableStyle, Image
-from .l10n import DefaultLocale
+from reportlab.platypus import Table, TableStyle
 
+from .l10n import DefaultLocale
 from . import font_loader
 
 class YearCalendar(object):

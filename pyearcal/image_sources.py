@@ -3,6 +3,7 @@ import fnmatch
 import random
 from collections import OrderedDict
 
+
 class ImageDirectory(object):
     def __init__(self):  
         self.read_images()
@@ -14,6 +15,7 @@ class ImageDirectory(object):
         # yield from self.images.values()
         for image in self.images.values():
             yield image
+
 
 class SortedImageDirectory(ImageDirectory):
     def __init__(self, dirname=".", extension=".jpg"):
@@ -29,6 +31,7 @@ class SortedImageDirectory(ImageDirectory):
                 self.images[index] = path
             else:
                 raise Exception("File does not exist: " + path)
+
 
 class UnsortedImageDirectory(ImageDirectory):
     def __init__(self, dirname=".", pattern="*.jpg"):

@@ -38,6 +38,7 @@ defaultSuffixes = {
     LIGHT_ITALIC : "li"
 }
 
+
 def load_ttf_font(font_name, variants, verbose=False):
     '''Try to load TTF font.
 
@@ -84,8 +85,10 @@ def _suffixify(base_name, **kwargs):
     all_variants.update(**kwargs)
     return { variant : base_name + suffix for variant, suffix in all_variants.items() }
 
+
 def _get_font_name(font_name, variant):
     return font_name + "-" + variant
+
 
 def get_font_name(font_name, variant=NORMAL, require_exact=False):
     '''Get name under which the font is registered in PDF metrics.
@@ -109,12 +112,14 @@ def get_font_name(font_name, variant=NORMAL, require_exact=False):
                 print("Font '%s', variant '%s' does not exist, using 'normal' instead." % (font_name, variant))
     return key
 
+
 def get_loaded_fonts():
     '''List all loaded fonts.
 
     :rtype: list
     '''
     return pdfmetrics.getRegisteredFontNames()
+
 
 def load_standard_windows_fonts():
     '''Load fonts that normally exist in Windows / Office.'''
@@ -132,6 +137,7 @@ def load_standard_windows_fonts():
     load_ttf_font("Times New Roman", _suffixify("times", bold="bd", italicBold="bi"))
     load_ttf_font("Trebuchet", _suffixify("trebuc", bold="bd", italic="it", italicBold="bi"))
     load_ttf_font("Verdana", _suffixify("verdana"))
+
 
 def load_standard_open_source_fonts():
     '''Load fonts that usually come with open-source software.'''
@@ -155,6 +161,7 @@ def load_standard_open_source_fonts():
     load_ttf_font("STIX", _suffixify("STIX", normal="-Regular", bold="-Bold",
         italic="-Italic", italicBold="-BoldItalic"))    
     load_ttf_font("Cantarell", _suffixify("Cantarell", normal="-Regular", bold="-Bold"))
+
 
 def add_font_directory(directory, walk=True):
     directory = os.path.expanduser(directory)
