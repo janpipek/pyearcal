@@ -10,10 +10,13 @@ However, you can add your fonts using load_ttf_font().
 
 '''
 import os
+import warnings
 
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont, TTFError
 from reportlab import rl_config
+
+from fontTools import ttLib
 
 # Define font variant names
 BOLD = "bold"
@@ -39,7 +42,11 @@ defaultSuffixes = {
 }
 
 
-def load_ttf_font(font_name, variants, verbose=False):
+class FontNotFound(RuntimeError):
+    pass
+
+
+def load_ttf_font(font_name, variants, verbose=True):
     '''Try to load TTF font.
 
     :param variants: dictionary of variants and corresponding file names.
@@ -48,16 +55,21 @@ def load_ttf_font(font_name, variants, verbose=False):
     It uses a few different extensions (ttf, otf, ttc + caps alternatives)
     '''
     kwargs = {}
+    # if verbose:
+    #     print(font_name)
+    #     print(variants)
     for key, file_name in variants.items():
         if file_name:
             for extension in ".ttf", ".otf", ".ttc", ".TTF", ".OTF", ".TTC":
                 try:
                     registered_name = _get_font_name(font_name, key)
-                    # print file_name + extension
+                    
                     pdfmetrics.registerFont(TTFont(registered_name, file_name + extension))
                     kwargs[key] = registered_name
+                    # print("{0}:{1}".format(font_name, file_name + extension))
                     break
                 except TTFError as e:
+                    # print(e)
                     # if 'postscript outlines are not supported' in e.:
                     #     print(e)
                     pass
@@ -101,6 +113,10 @@ def get_font_name(font_name, variant=NORMAL, require_exact=False):
     normal variant or throw exception.
     '''
     key = _get_font_name(font_name, variant)
+    
+    if not key in pdfmetrics.getRegisteredFontNames():
+        try_load_font_mpl(font_name)
+
     if not key in pdfmetrics.getRegisteredFontNames():
         if require_exact:
             raise Exception("Font '%s', variant '%s' does not exist." % (font_name, variant))
@@ -163,6 +179,60 @@ def load_standard_open_source_fonts():
     load_ttf_font("Cantarell", _suffixify("Cantarell", normal="-Regular", bold="-Bold"))
 
 
+def load_system_fonts():
+    from matplotlib.font_manager import findSystemFonts
+    fonts = findSystemFonts()
+    families = {get_font_family(font) for font in fonts}
+    for family in families:
+        try_load_font_mpl(family)
+
+
+def try_load_font_mpl(name):
+    try:
+        from matplotlib.font_manager import FontManager
+    except ImportError:
+        return
+
+    fm = FontManager()
+    suggestions={}
+
+    for style in [BOLD, LIGHT, LIGHT_ITALIC, ITALIC, ITALIC_BOLD, NORMAL]:
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore")
+            suggestion = fm.findfont("{0}:{1}".format(name, style.lower()), fallback_to_default=True)
+        if get_font_family(suggestion) != name:
+            continue
+        else:
+            add_font_directory(os.path.dirname(suggestion))
+            suggestions[style] = suggestion
+
+    load_ttf_font(name, {style: os.path.splitext(os.path.basename(suggestion))[0] for style, suggestion in suggestions.items()})
+
+
+def get_font_family(path):
+    """Get the short name from the font's names table"""
+    name = ""
+    family = ""
+
+    font = ttLib.TTFont(path)
+
+    FONT_SPECIFIER_NAME_ID = 4
+    FONT_SPECIFIER_FAMILY_ID = 1
+
+    for record in font['name'].names:
+        if b'\x00' in record.string:
+            name_str = record.string.decode('utf-16-be', errors='replace')
+        else:
+            name_str = record.string.decode('utf-8', errors='replace')
+        if record.nameID == FONT_SPECIFIER_NAME_ID and not name:
+            name = name_str
+        elif record.nameID == FONT_SPECIFIER_FAMILY_ID and not family:
+            family = name_str
+        if name and family:
+            break
+    return family
+
+
 def add_font_directory(directory, walk=True):
     directory = os.path.expanduser(directory)
     all_dirs = [ directory ]
@@ -179,5 +249,6 @@ if os.name == "posix":
 
 add_font_directory(".")
 
-load_standard_windows_fonts()
-load_standard_open_source_fonts()
+# load_system_fonts()
+#load_standard_windows_fonts()
+#load_standard_open_source_fonts()

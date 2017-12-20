@@ -233,7 +233,7 @@ class YearCalendar(object):
 
         font_name = font_loader.get_font_name(self.cell_font_name, self.cell_font_variant)
         style.add("FONT", (0, 0), (-1, -1), font_name, self.cell_font_size)
-        style.add("ALIGN", (0, 0), (-1, -1), "RIGHT")
+        style.add("ALIGN", (0, 0), (-1, -1), "LEFT")
         style.add("VALIGN", (0, 0), (-1, -1), "MIDDLE")
         style.add("BACKGROUND", (0, 0), (-1, -1), self.week_bgcolor)
         style.add("TEXTCOLOR", (0, 0), (-1, -1), self.week_color)
