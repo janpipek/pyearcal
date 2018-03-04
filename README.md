@@ -1,4 +1,4 @@
-[![Latest Version](https://pypip.in/version/pyearcal/badge.svg)](https://pypi.python.org/pypi/pyearcal/)
+[![Latest Version](https://img.shields.io/pypi/v/pyearcal.svg)](https://pypi.python.org/pypi/pyearcal/)
 
 pyearcal
 ========
