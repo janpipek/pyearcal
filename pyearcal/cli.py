@@ -29,8 +29,12 @@ def load_special_days(path, year):
 @click.option("-y", "--year", default=date.today().year+1, type=int)
 @click.option("-f", "--font", type=str)
 @click.option("-d", "--special-days", type=str)
-def run(output, source, locale, year, special_days=None, font=None):
-    image_source = UnsortedImageDirectory(source)
+@click.option("--sorted/--unsorted", default=False)
+def run(output, source, locale, year, special_days=None, font=None, sorted=False):
+    if sorted:
+        image_source = SortedImageDirectory(source)
+    else:
+        image_source = UnsortedImageDirectory(source)
     locales = get_locale(locale)
     kwargs = {}
     if font:
