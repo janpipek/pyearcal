@@ -9,6 +9,7 @@ and a few open-source fonts in load_standard_open_source_fonts().
 However, you can add your fonts using load_ttf_font().
 
 '''
+import logging
 import os
 import warnings
 
@@ -79,7 +80,7 @@ def load_ttf_font(font_name, variants, verbose=True):
     try:
         if len(kwargs):
             if verbose:
-                print("Font '%s' found (%s)" % (font_name, ", ".join(kwargs.keys())))
+                logging.info("Font '%s' found (%s)" % (font_name, ", ".join(kwargs.keys())))
             pdfmetrics.registerFontFamily(font_name, **kwargs)
             return True
     except:

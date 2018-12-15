@@ -1,5 +1,7 @@
 from __future__ import division, absolute_import
 
+import logging
+
 from calendar import Calendar
 
 import PIL
@@ -12,6 +14,7 @@ from reportlab.platypus import Table, TableStyle
 
 from .l10n import DefaultLocale
 from . import font_loader
+
 
 class YearCalendar(object):
     '''A year calendar with 12 pages for each month.
@@ -267,6 +270,6 @@ class YearCalendar(object):
         self.canvas.setTitle("{0} {1}".format(self.locale.calendar_name, self.year))
         self.render_title_page()   # TODO: To be implemented
         for month in range(1, 13):
-            print("Page {0} rendered.".format(month))
+            logging.info("Page {0} rendered.".format(month))
             self._render_month(month)
         self.canvas.save()
