@@ -2,3 +2,4 @@ reportlab
 BeautifulSoup4   # For FlickDownloader
 requests  # For FlickDownloader
 python-dateutil
+fonttols
