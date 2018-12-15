@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from datetime import date
+import logging
 
 import click
 from reportlab.lib import colors
@@ -30,7 +31,17 @@ def load_special_days(path, year):
 @click.option("-f", "--font", type=str)
 @click.option("-d", "--special-days", type=str)
 @click.option("--sorted/--unsorted", default=False)
-def run(output, source, locale, year, special_days=None, font=None, sorted=False):
+@click.option("-v", "--verbose", count=True)
+def run(output, source, locale, year, special_days=None, font=None, sorted=False, verbose=0):
+    if verbose:
+        if verbose == 1:
+            logging.basicConfig(level=logging.INFO)
+        if verbose == 2:
+            logging.basicConfig(level=logging.DEBUG)
+        else:
+            logging.warn("Invalid verbosity level (available: 0..2)")
+
+
     if sorted:
         image_source = SortedImageDirectory(source)
     else:
