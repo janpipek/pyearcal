@@ -20,7 +20,7 @@ class SlovakLocale(DefaultLocale):
             "September",
             "Október",
             "November",
-            "December"
+            "December",
         )
 
     @property

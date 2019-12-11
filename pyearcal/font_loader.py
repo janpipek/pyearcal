@@ -1,4 +1,4 @@
-'''font_loader module
+"""font_loader module
 
 This modules enables (and automatically performs) loading
 of TTF fonts.
@@ -8,7 +8,7 @@ and a few open-source fonts in load_standard_open_source_fonts().
 
 However, you can add your fonts using load_ttf_font().
 
-'''
+"""
 import logging
 import os
 import warnings
@@ -34,12 +34,12 @@ OBLIQUE = ITALIC
 BOLD_ITALIC = ITALIC_BOLD
 
 defaultSuffixes = {
-    NORMAL : "",
-    BOLD : "b",
-    ITALIC : "i",
-    ITALIC_BOLD : "z",
-    LIGHT : "l",
-    LIGHT_ITALIC : "li"
+    NORMAL: "",
+    BOLD: "b",
+    ITALIC: "i",
+    ITALIC_BOLD: "z",
+    LIGHT: "l",
+    LIGHT_ITALIC: "li",
 }
 
 
@@ -48,13 +48,13 @@ class FontNotFound(RuntimeError):
 
 
 def load_ttf_font(font_name, variants, verbose=True):
-    '''Try to load TTF font.
+    """Try to load TTF font.
 
     :param variants: dictionary of variants and corresponding file names.
 
     It tries to find the font in all directories reportlab looks in (+ few others).
     It uses a few different extensions (ttf, otf, ttc + caps alternatives)
-    '''
+    """
     kwargs = {}
     # if verbose:
     #     print(font_name)
@@ -64,7 +64,7 @@ def load_ttf_font(font_name, variants, verbose=True):
             for extension in ".ttf", ".otf", ".ttc", ".TTF", ".OTF", ".TTC":
                 try:
                     registered_name = _get_font_name(font_name, key)
-                    
+
                     pdfmetrics.registerFont(TTFont(registered_name, file_name + extension))
                     kwargs[key] = registered_name
                     # print("{0}:{1}".format(font_name, file_name + extension))
@@ -85,18 +85,18 @@ def load_ttf_font(font_name, variants, verbose=True):
             return True
     except:
         return False
-    
+
 
 def _suffixify(base_name, **kwargs):
-    '''Guess variant font file names.
+    """Guess variant font file names.
 
     Uses defaultSuffixes and overrides them with supplied kwargs.
     Returns a dictionary with file names without file extensions.
-    '''
+    """
     all_variants = {}
     all_variants.update(defaultSuffixes)
     all_variants.update(**kwargs)
-    return { variant : base_name + suffix for variant, suffix in all_variants.items() }
+    return {variant: base_name + suffix for variant, suffix in all_variants.items()}
 
 
 def _get_font_name(font_name, variant):
@@ -104,7 +104,7 @@ def _get_font_name(font_name, variant):
 
 
 def get_font_name(font_name, variant=NORMAL, require_exact=False):
-    '''Get name under which the font is registered in PDF metrics.
+    """Get name under which the font is registered in PDF metrics.
 
     :param font_name: The basic name of the font (like 'Arial', ...)
     :param variant: Variant of the file name (like 'normal', 'italic', ...)
@@ -112,9 +112,9 @@ def get_font_name(font_name, variant=NORMAL, require_exact=False):
 
     Tries to find the font. If not found, it can either fallback to
     normal variant or throw exception.
-    '''
+    """
     key = _get_font_name(font_name, variant)
-    
+
     if not key in pdfmetrics.getRegisteredFontNames():
         try_load_font_mpl(font_name)
 
@@ -126,20 +126,23 @@ def get_font_name(font_name, variant=NORMAL, require_exact=False):
             if not key in pdfmetrics.getRegisteredFontNames():
                 raise Exception("Font '%s' does not exist." % (font_name))
             else:
-                print("Font '%s', variant '%s' does not exist, using 'normal' instead." % (font_name, variant))
+                print(
+                    "Font '%s', variant '%s' does not exist, using 'normal' instead."
+                    % (font_name, variant)
+                )
     return key
 
 
 def get_loaded_fonts():
-    '''List all loaded fonts.
+    """List all loaded fonts.
 
     :rtype: list
-    '''
+    """
     return pdfmetrics.getRegisteredFontNames()
 
 
 def load_standard_windows_fonts():
-    '''Load fonts that normally exist in Windows / Office.'''
+    """Load fonts that normally exist in Windows / Office."""
     load_ttf_font("Arial", _suffixify("arial", bold="bd", italicBold="bi"))
     load_ttf_font("Calibri", _suffixify("calibri"))
     load_ttf_font("Cambria", _suffixify("cambria"))
@@ -157,31 +160,67 @@ def load_standard_windows_fonts():
 
 
 def load_standard_open_source_fonts():
-    '''Load fonts that usually come with open-source software.'''
-    load_ttf_font("DejaVu Sans", _suffixify("DejaVuSans", bold="-Bold",
-        italic="-Oblique", italicBold="-BoldOblique"))
-    load_ttf_font("DejaVu Sans Condensed", _suffixify("DejaVuSansCondensed", bold="-Bold",
-        italic="-Oblique", italicBold="-BoldOblique"))
-    load_ttf_font("DejaVu Serif", _suffixify("DejaVuSerif", bold="-Bold",
-        italic="-Oblique", italicBold="-BoldOblique"))
-    load_ttf_font("DejaVu Serif Condensed", _suffixify("DejaVuSerifCondensed", bold="-Bold",
-        italic="-Oblique", italicBold="-BoldOblique"))
+    """Load fonts that usually come with open-source software."""
+    load_ttf_font(
+        "DejaVu Sans",
+        _suffixify("DejaVuSans", bold="-Bold", italic="-Oblique", italicBold="-BoldOblique"),
+    )
+    load_ttf_font(
+        "DejaVu Sans Condensed",
+        _suffixify(
+            "DejaVuSansCondensed", bold="-Bold", italic="-Oblique", italicBold="-BoldOblique"
+        ),
+    )
+    load_ttf_font(
+        "DejaVu Serif",
+        _suffixify("DejaVuSerif", bold="-Bold", italic="-Oblique", italicBold="-BoldOblique"),
+    )
+    load_ttf_font(
+        "DejaVu Serif Condensed",
+        _suffixify(
+            "DejaVuSerifCondensed", bold="-Bold", italic="-Oblique", italicBold="-BoldOblique"
+        ),
+    )
     load_ttf_font("Gentium", _suffixify("Gen", normal="R102", italic="I102"))
-    load_ttf_font("Gentium Basic",_suffixify("GenBas", normal="R", bold="B",
-        italic="I", italicBold="BI"))
-    load_ttf_font("Gentium Book Basic", _suffixify("GenBkBas", normal="R", bold="B",
-        italic="I", italicBold="BI"))
-    load_ttf_font("Liberation Sans", _suffixify("LiberationSans", normal="-Regular", bold="-Bold",
-        italic="-Italic", italicBold="-BoldItalic"))    
-    load_ttf_font("Liberation Serif", _suffixify("LiberationSerif", normal="-Regular", bold="-Bold",
-        italic="-Italic", italicBold="-BoldItalic"))             
-    load_ttf_font("STIX", _suffixify("STIX", normal="-Regular", bold="-Bold",
-        italic="-Italic", italicBold="-BoldItalic"))    
+    load_ttf_font(
+        "Gentium Basic", _suffixify("GenBas", normal="R", bold="B", italic="I", italicBold="BI")
+    )
+    load_ttf_font(
+        "Gentium Book Basic",
+        _suffixify("GenBkBas", normal="R", bold="B", italic="I", italicBold="BI"),
+    )
+    load_ttf_font(
+        "Liberation Sans",
+        _suffixify(
+            "LiberationSans",
+            normal="-Regular",
+            bold="-Bold",
+            italic="-Italic",
+            italicBold="-BoldItalic",
+        ),
+    )
+    load_ttf_font(
+        "Liberation Serif",
+        _suffixify(
+            "LiberationSerif",
+            normal="-Regular",
+            bold="-Bold",
+            italic="-Italic",
+            italicBold="-BoldItalic",
+        ),
+    )
+    load_ttf_font(
+        "STIX",
+        _suffixify(
+            "STIX", normal="-Regular", bold="-Bold", italic="-Italic", italicBold="-BoldItalic"
+        ),
+    )
     load_ttf_font("Cantarell", _suffixify("Cantarell", normal="-Regular", bold="-Bold"))
 
 
 def load_system_fonts():
     from matplotlib.font_manager import findSystemFonts
+
     fonts = findSystemFonts()
     families = {get_font_family(font) for font in fonts}
     for family in families:
@@ -195,19 +234,27 @@ def try_load_font_mpl(name):
         return
 
     fm = FontManager()
-    suggestions={}
+    suggestions = {}
 
     for style in [BOLD, LIGHT, LIGHT_ITALIC, ITALIC, ITALIC_BOLD, NORMAL]:
         with warnings.catch_warnings():
             warnings.filterwarnings("ignore")
-            suggestion = fm.findfont("{0}:{1}".format(name, style.lower()), fallback_to_default=True)
+            suggestion = fm.findfont(
+                "{0}:{1}".format(name, style.lower()), fallback_to_default=True
+            )
         if get_font_family(suggestion) != name:
             continue
         else:
             add_font_directory(os.path.dirname(suggestion))
             suggestions[style] = suggestion
 
-    load_ttf_font(name, {style: os.path.splitext(os.path.basename(suggestion))[0] for style, suggestion in suggestions.items()})
+    load_ttf_font(
+        name,
+        {
+            style: os.path.splitext(os.path.basename(suggestion))[0]
+            for style, suggestion in suggestions.items()
+        },
+    )
 
 
 def get_font_family(path):
@@ -220,11 +267,11 @@ def get_font_family(path):
     FONT_SPECIFIER_NAME_ID = 4
     FONT_SPECIFIER_FAMILY_ID = 1
 
-    for record in font['name'].names:
-        if b'\x00' in record.string:
-            name_str = record.string.decode('utf-16-be', errors='replace')
+    for record in font["name"].names:
+        if b"\x00" in record.string:
+            name_str = record.string.decode("utf-16-be", errors="replace")
         else:
-            name_str = record.string.decode('utf-8', errors='replace')
+            name_str = record.string.decode("utf-8", errors="replace")
         if record.nameID == FONT_SPECIFIER_NAME_ID and not name:
             name = name_str
         elif record.nameID == FONT_SPECIFIER_FAMILY_ID and not family:
@@ -236,10 +283,10 @@ def get_font_family(path):
 
 def add_font_directory(directory, walk=True):
     directory = os.path.expanduser(directory)
-    all_dirs = [ directory ]
+    all_dirs = [directory]
     if walk:
         for current, dirs, _ in os.walk(directory):
-            all_dirs += [ os.path.join(current, d) for d in dirs ]
+            all_dirs += [os.path.join(current, d) for d in dirs]
     rl_config.TTFSearchPath = tuple(list(rl_config.TTFSearchPath) + all_dirs)
     # print(rl_config.TTFSearchPath)
 
@@ -251,5 +298,5 @@ if os.name == "posix":
 add_font_directory(".")
 
 # load_system_fonts()
-#load_standard_windows_fonts()
-#load_standard_open_source_fonts()
+# load_standard_windows_fonts()
+# load_standard_open_source_fonts()

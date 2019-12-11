@@ -5,7 +5,7 @@ from collections import OrderedDict
 
 
 class ImageDirectory(object):
-    def __init__(self):  
+    def __init__(self):
         self.read_images()
 
     def __getitem__(self, index):
@@ -41,7 +41,9 @@ class UnsortedImageDirectory(ImageDirectory):
 
     def read_images(self):
         self.images = OrderedDict()
-        all_file_names = [ fn for fn in os.listdir(self.dirname) if fnmatch.fnmatch(fn, self.pattern) ]
+        all_file_names = [
+            fn for fn in os.listdir(self.dirname) if fnmatch.fnmatch(fn, self.pattern)
+        ]
         sampled_file_names = random.sample(all_file_names, 12)
 
         for index, name in enumerate(sampled_file_names):

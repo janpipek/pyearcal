@@ -26,8 +26,8 @@ def load_special_days(path, year):
 @click.command()
 @click.argument("output", default="calendar.pdf")
 @click.option("-s", "--source", type=click.Path(), default=".")
-@click.option("-l", "--locale", type=click.Choice(['en', 'cs', 'it', 'sk']), default="en")
-@click.option("-y", "--year", default=date.today().year+1, type=int)
+@click.option("-l", "--locale", type=click.Choice(["en", "cs", "it", "sk"]), default="en")
+@click.option("-y", "--year", default=date.today().year + 1, type=int)
 @click.option("-f", "--font", type=str)
 @click.option("-d", "--special-days", type=str)
 @click.option("--sorted/--unsorted", default=False)
@@ -41,7 +41,6 @@ def run(output, source, locale, year, special_days=None, font=None, sorted=False
         else:
             logging.warn("Invalid verbosity level (available: 0..2)")
 
-
     if sorted:
         image_source = SortedImageDirectory(source)
     else:
@@ -52,7 +51,7 @@ def run(output, source, locale, year, special_days=None, font=None, sorted=False
         kwargs["title_font_name"] = font
         kwargs["cell_font_name"] = font
     if special_days:
-        kwargs["special_days"] = load_special_days(special_days, year)        
+        kwargs["special_days"] = load_special_days(special_days, year)
     calendar = YearCalendar(year, image_source, locales, **kwargs)
     calendar.render(output)
 

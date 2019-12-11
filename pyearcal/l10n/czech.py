@@ -20,13 +20,13 @@ class CzechLocale(DefaultLocale):
             "Září",
             "Říjen",
             "Listopad",
-            "Prosinec"
+            "Prosinec",
         )
 
     @property
     def first_day_of_week(self):
-        return calendar.MONDAY   
-        
+        return calendar.MONDAY
+
     def holidays(self, year):
         hols = super(CzechLocale, self).holidays(year)
         hols.append(date(year, 1, 1))
@@ -41,9 +41,9 @@ class CzechLocale(DefaultLocale):
         hols.append(date(year, 12, 25))
         hols.append(date(year, 12, 26))
 
-        hols.append( easter(year) + timedelta(days=1))
+        hols.append(easter(year) + timedelta(days=1))
         if year >= 2016:
-            hols.append( easter(year) + timedelta(days=-2))
+            hols.append(easter(year) + timedelta(days=-2))
         return hols
 
     @property

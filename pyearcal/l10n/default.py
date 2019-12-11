@@ -2,10 +2,11 @@ import calendar
 
 
 class DefaultLocale(object):
-    '''Default calendar.
+    """Default calendar.
 
     In english language, Sunday as first day, no holidays.
-    '''
+    """
+
     @property
     def month_names(self):
         return (
@@ -20,7 +21,7 @@ class DefaultLocale(object):
             "September",
             "October",
             "November",
-            "December"
+            "December",
         )
 
     def month_title(self, year, month, include_year):
@@ -35,7 +36,7 @@ class DefaultLocale(object):
 
     @property
     def weekend(self):
-        return [ calendar.SATURDAY, calendar.SUNDAY ]
+        return [calendar.SATURDAY, calendar.SUNDAY]
 
     def holidays(self, year):
         return []
