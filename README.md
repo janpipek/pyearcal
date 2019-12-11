@@ -9,7 +9,7 @@ Generate your year calendar in Python. The result is a PDF file with 12 pages co
 * reportlab
 * DejaVu fonts (if you want pyearcal work out of the box)
 * BeautifulSoup (optional)
-* Python 2.7?, 3.4+ (version <=0.2 only Python 2.7 support)
+* Python 3.4+
 
 ### Usage
 
@@ -19,6 +19,19 @@ Generate your year calendar in Python. The result is a PDF file with 12 pages co
     * Special days (national holidays are included + add your own)
     * Fonts, colours
 3. Render it to PDF
+
+### Usage of the script
+
+```
+Usage: pyearcal [OPTIONS] [OUTPUT]
+
+Options:
+  -s, --source PATH
+  -l, --locale [en|cs|it|sk]
+  -y, --year INTEGER
+  -f, --font TEXT
+  -d, --special-days TEXT
+  ```
 
 ### Example code
 
@@ -47,19 +60,6 @@ calendar.render("calendar.pdf")
 ```
 
 You can take **FlickrDownloader** as an inspiration for developing a more sophisticated image source.
-
-### Usage of the script
-
-```
-Usage: pyearcal [OPTIONS] [OUTPUT]
-
-Options:
-  -s, --source PATH
-  -l, --locale [en|cs|it|sk]
-  -y, --year INTEGER
-  -f, --font TEXT
-  -d, --special-days TEXT
-  ```
 
 ### Example with real pictures
 

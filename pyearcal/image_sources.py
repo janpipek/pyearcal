@@ -1,15 +1,16 @@
+import abc
 import os
 import fnmatch
 import random
+from typing import Dict
 from collections import OrderedDict
 
 
-class ImageDirectory(object):
-    def __init__(self):
-        self.read_images()
-
-    def __getitem__(self, index):
+class ImageDirectory(abc.ABC):
+    def __getitem__(self, index: int) -> str:
         return self.images[index]
+
+    images: Dict[int, str]
 
     def __iter__(self):
         # yield from self.images.values()
@@ -21,7 +22,7 @@ class SortedImageDirectory(ImageDirectory):
     def __init__(self, dirname=".", extension=".jpg"):
         self.dirname = dirname
         self.extension = extension
-        super(SortedImageDirectory, self).__init__()
+        self.read_images()
 
     def read_images(self):
         self.images = OrderedDict()
@@ -37,7 +38,7 @@ class UnsortedImageDirectory(ImageDirectory):
     def __init__(self, dirname=".", pattern="*.jpg"):
         self.dirname = dirname
         self.pattern = pattern
-        super(UnsortedImageDirectory, self).__init__()
+        self.read_images()
 
     def read_images(self):
         self.images = OrderedDict()
