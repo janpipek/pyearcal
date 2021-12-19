@@ -60,14 +60,14 @@ class YearCalendar(object):
         pictures,
         locale: Locale = DefaultLocale(),
         special_days: Collection[date] = (),
-        **kwargs
+        **kwargs,
     ):
         """Constructor with all initialization.
 
         :param year: The year in YYYY format.
         :param pictures: A picture source (collection with indexes 1..12).
         :param scaling: Algorithm for scaling pictures (default squarecrop, see)
-        :param kwargs: A dictionary of attributes to be overridden (see class description)
+        :param kwargs: A dictionary of attributes to be overridden
         """
         self.year = year
         self.pictures = pictures
@@ -134,9 +134,11 @@ class YearCalendar(object):
             b = BytesIO()
             pil_im.save(b, format="png")
             image_data = b64encode(b.getvalue()).decode("utf-8")
-            html += "<img style='display:inline-block; margin:1px' alt='{0}' src='data:image/png;base64,{1}'/>".format(
-                i, image_data
+            html += (
+                "<img style='display:inline-block; margin:1px' "
+                f"alt='{i}' src='data:image/png;base64,{image_data}'/>"
             )
+
         html += "</div>"
         html += "</div>"
         return html

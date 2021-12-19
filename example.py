@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # Import important modules
-from pyearcal import YearCalendar
+from pyearcal.year_calendar import YearCalendar
 from datetime import date
 from pyearcal.l10n import DefaultLocale
 from pyearcal.flickr_downloader import FlickrDownloader
@@ -19,9 +19,9 @@ else:
 locale = DefaultLocale()
 
 # Set a few special days
-special_days = [
-    date(year, 1, 31) # Guido van Rossum's birthday
-]
+special_days = [date(year, 1, 31)]  # Guido van Rossum's birthday
 
-calendar = YearCalendar(year, image_source, locale=locale, scaling="squarecrop", special_days=special_days)
+calendar = YearCalendar(
+    year, image_source, locale=locale, scaling="squarecrop", special_days=special_days
+)
 calendar.render("calendar.pdf")

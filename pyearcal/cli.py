@@ -3,9 +3,8 @@ from datetime import date
 import logging
 
 import click
-from reportlab.lib import colors
 
-from pyearcal import YearCalendar, font_loader
+from pyearcal.year_calendar import YearCalendar
 from pyearcal.l10n import get_locale
 from pyearcal.image_sources import UnsortedImageDirectory, SortedImageDirectory
 

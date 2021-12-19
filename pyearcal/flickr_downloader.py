@@ -34,7 +34,7 @@ class FlickrDownloader(SortedImageDirectory):
         for index, image in enumerate(image_list):
             response = requests.get(image)
             with open(
-                os.path.join(TEMP_DIR, f"{index + 1}{EXTENSION}", "wb")
+                os.path.join(TEMP_DIR, f"{index + 1}{EXTENSION}"), "wb"
             ) as output_file:
                 output_file.write(response.content)
             response.close()

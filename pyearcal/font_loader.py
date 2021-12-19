@@ -17,7 +17,7 @@ import warnings
 from matplotlib import font_manager
 
 from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont, TTFError
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab import rl_config
 
 from fontTools import ttLib
@@ -50,7 +50,7 @@ class FontNotFound(RuntimeError):
     pass
 
 
-def load_ttf_font(font_name, variants: Dict[str, str], verbose: bool = True) -> bool:
+def load_ttf_font(font_name, variants: Dict[str, str]) -> bool:
     """Try to load TTF font.
 
     :param variants: dictionary of variants and corresponding file names.
@@ -59,9 +59,6 @@ def load_ttf_font(font_name, variants: Dict[str, str], verbose: bool = True) -> 
     It uses a few different extensions (ttf, otf, ttc + caps alternatives)
     """
     kwargs = {}
-    # if verbose:
-    #     print(font_name)
-    #     print(variants)
     for key, file_name in variants.items():
         if file_name:
             for extension in ".ttf", ".otf", ".ttc", ".TTF", ".OTF", ".TTC":
@@ -72,26 +69,18 @@ def load_ttf_font(font_name, variants: Dict[str, str], verbose: bool = True) -> 
                         TTFont(registered_name, file_name + extension)
                     )
                     kwargs[key] = registered_name
-                    # print("{0}:{1}".format(font_name, file_name + extension))
+                    logging.debug(f"Loaded font {registered_name}.")
                     break
-                except TTFError as e:
-                    # print(e)
-                    # if 'postscript outlines are not supported' in e.:
-                    #     print(e)
-                    pass
-                except Exception as e:
-                    # print e
+                except Exception as exc:
+                    logging.exception(exc)
                     pass
     try:
         if len(kwargs):
-            if verbose:
-                logging.info(
-                    "Font '%s' found (%s)" % (font_name, ", ".join(kwargs.keys()))
-                )
+            logging.info("Font '%s' found (%s)" % (font_name, ", ".join(kwargs.keys())))
             pdfmetrics.registerFontFamily(font_name, **kwargs)
             return True
-    except:
-        pass
+    except Exception as exc:
+        logging.exception(exc)
     return False
 
 
@@ -125,21 +114,22 @@ def get_font_name(
     """
     key = _get_font_name(font_name, variant)
 
-    if not key in pdfmetrics.getRegisteredFontNames():
+    if key not in pdfmetrics.getRegisteredFontNames():
         try_load_font_mpl(font_name)
 
-    if not key in pdfmetrics.getRegisteredFontNames():
+    if key not in pdfmetrics.getRegisteredFontNames():
         if require_exact:
             raise FontNotFound(
                 f"Font '{font_name}', variant '{variant}' does not exist."
             )
         else:
             key = _get_font_name(font_name, variant=NORMAL)
-            if not key in pdfmetrics.getRegisteredFontNames():
+            if key not in pdfmetrics.getRegisteredFontNames():
                 raise FontNotFound(f"Font '{font_manager}' does not exist.")
             else:
                 print(
-                    f"Font '{font_name}', variant '{variant}' does not exist, using 'normal' instead."
+                    f"Font '{font_name}', variant '{variant}' "
+                    "does not exist, using 'normal' instead."
                 )
     return key
 
