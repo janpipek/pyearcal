@@ -15,7 +15,7 @@ class FlickrDownloader(SortedImageDirectory):
         http://blog.art21.org/2011/09/20/how-to-use-python-to-create-a-simple-flickr-photo-glitcher
     """
 
-    def download_images(self, number=12):
+    def download_images(self, number: int = 12) -> None:
         response = requests.get(
             "http://api.flickr.com/services/feeds/photos_public.gne?tags="
             + self.keyword
@@ -33,13 +33,15 @@ class FlickrDownloader(SortedImageDirectory):
             os.makedirs(TEMP_DIR)
         for index, image in enumerate(image_list):
             response = requests.get(image)
-            with open(os.path.join(TEMP_DIR, "%d%s" % (index + 1, EXTENSION)), "wb") as output_file:
+            with open(
+                os.path.join(TEMP_DIR, f"{index + 1}{EXTENSION}", "wb")
+            ) as output_file:
                 output_file.write(response.content)
             response.close()
-            print("Downloaded picture %d of %d from flickr." % (index + 1, number))
+            print(f"Downloaded picture {index + 1} of {number} from flickr.")
 
-    def __init__(self, keyword="python"):
-        """        
+    def __init__(self, keyword: str = "python"):
+        """
         :param keyword: a keyword to look for on flickr.
         """
         self.keyword = keyword

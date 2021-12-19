@@ -11,7 +11,10 @@ However, you can add your fonts using load_ttf_font().
 """
 import logging
 import os
+from typing import Dict, List
 import warnings
+
+from matplotlib import font_manager
 
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont, TTFError
@@ -47,7 +50,7 @@ class FontNotFound(RuntimeError):
     pass
 
 
-def load_ttf_font(font_name, variants, verbose=True):
+def load_ttf_font(font_name, variants: Dict[str, str], verbose: bool = True) -> bool:
     """Try to load TTF font.
 
     :param variants: dictionary of variants and corresponding file names.
@@ -65,7 +68,9 @@ def load_ttf_font(font_name, variants, verbose=True):
                 try:
                     registered_name = _get_font_name(font_name, key)
 
-                    pdfmetrics.registerFont(TTFont(registered_name, file_name + extension))
+                    pdfmetrics.registerFont(
+                        TTFont(registered_name, file_name + extension)
+                    )
                     kwargs[key] = registered_name
                     # print("{0}:{1}".format(font_name, file_name + extension))
                     break
@@ -80,14 +85,17 @@ def load_ttf_font(font_name, variants, verbose=True):
     try:
         if len(kwargs):
             if verbose:
-                logging.info("Font '%s' found (%s)" % (font_name, ", ".join(kwargs.keys())))
+                logging.info(
+                    "Font '%s' found (%s)" % (font_name, ", ".join(kwargs.keys()))
+                )
             pdfmetrics.registerFontFamily(font_name, **kwargs)
             return True
     except:
-        return False
+        pass
+    return False
 
 
-def _suffixify(base_name, **kwargs):
+def _suffixify(base_name: str, **kwargs) -> Dict[str, str]:
     """Guess variant font file names.
 
     Uses defaultSuffixes and overrides them with supplied kwargs.
@@ -99,11 +107,13 @@ def _suffixify(base_name, **kwargs):
     return {variant: base_name + suffix for variant, suffix in all_variants.items()}
 
 
-def _get_font_name(font_name, variant):
-    return font_name + "-" + variant
+def _get_font_name(font_name: str, variant: str) -> str:
+    return f"{font_name}-{variant}"
 
 
-def get_font_name(font_name, variant=NORMAL, require_exact=False):
+def get_font_name(
+    font_name: str, variant: str = NORMAL, require_exact: bool = False
+) -> str:
     """Get name under which the font is registered in PDF metrics.
 
     :param font_name: The basic name of the font (like 'Arial', ...)
@@ -120,20 +130,21 @@ def get_font_name(font_name, variant=NORMAL, require_exact=False):
 
     if not key in pdfmetrics.getRegisteredFontNames():
         if require_exact:
-            raise Exception("Font '%s', variant '%s' does not exist." % (font_name, variant))
+            raise FontNotFound(
+                f"Font '{font_name}', variant '{variant}' does not exist."
+            )
         else:
             key = _get_font_name(font_name, variant=NORMAL)
             if not key in pdfmetrics.getRegisteredFontNames():
-                raise Exception("Font '%s' does not exist." % (font_name))
+                raise FontNotFound(f"Font '{font_manager}' does not exist.")
             else:
                 print(
-                    "Font '%s', variant '%s' does not exist, using 'normal' instead."
-                    % (font_name, variant)
+                    f"Font '{font_name}', variant '{variant}' does not exist, using 'normal' instead."
                 )
     return key
 
 
-def get_loaded_fonts():
+def get_loaded_fonts() -> List[str]:
     """List all loaded fonts.
 
     :rtype: list
@@ -141,7 +152,7 @@ def get_loaded_fonts():
     return pdfmetrics.getRegisteredFontNames()
 
 
-def load_standard_windows_fonts():
+def load_standard_windows_fonts() -> None:
     """Load fonts that normally exist in Windows / Office."""
     load_ttf_font("Arial", _suffixify("arial", bold="bd", italicBold="bi"))
     load_ttf_font("Calibri", _suffixify("calibri"))
@@ -155,35 +166,48 @@ def load_standard_windows_fonts():
     load_ttf_font("Georgia", _suffixify("georgia"))
     load_ttf_font("Tahoma", _suffixify("tahoma", bold="bd"))
     load_ttf_font("Times New Roman", _suffixify("times", bold="bd", italicBold="bi"))
-    load_ttf_font("Trebuchet", _suffixify("trebuc", bold="bd", italic="it", italicBold="bi"))
+    load_ttf_font(
+        "Trebuchet", _suffixify("trebuc", bold="bd", italic="it", italicBold="bi")
+    )
     load_ttf_font("Verdana", _suffixify("verdana"))
 
 
-def load_standard_open_source_fonts():
+def load_standard_open_source_fonts() -> None:
     """Load fonts that usually come with open-source software."""
     load_ttf_font(
         "DejaVu Sans",
-        _suffixify("DejaVuSans", bold="-Bold", italic="-Oblique", italicBold="-BoldOblique"),
+        _suffixify(
+            "DejaVuSans", bold="-Bold", italic="-Oblique", italicBold="-BoldOblique"
+        ),
     )
     load_ttf_font(
         "DejaVu Sans Condensed",
         _suffixify(
-            "DejaVuSansCondensed", bold="-Bold", italic="-Oblique", italicBold="-BoldOblique"
+            "DejaVuSansCondensed",
+            bold="-Bold",
+            italic="-Oblique",
+            italicBold="-BoldOblique",
         ),
     )
     load_ttf_font(
         "DejaVu Serif",
-        _suffixify("DejaVuSerif", bold="-Bold", italic="-Oblique", italicBold="-BoldOblique"),
+        _suffixify(
+            "DejaVuSerif", bold="-Bold", italic="-Oblique", italicBold="-BoldOblique"
+        ),
     )
     load_ttf_font(
         "DejaVu Serif Condensed",
         _suffixify(
-            "DejaVuSerifCondensed", bold="-Bold", italic="-Oblique", italicBold="-BoldOblique"
+            "DejaVuSerifCondensed",
+            bold="-Bold",
+            italic="-Oblique",
+            italicBold="-BoldOblique",
         ),
     )
     load_ttf_font("Gentium", _suffixify("Gen", normal="R102", italic="I102"))
     load_ttf_font(
-        "Gentium Basic", _suffixify("GenBas", normal="R", bold="B", italic="I", italicBold="BI")
+        "Gentium Basic",
+        _suffixify("GenBas", normal="R", bold="B", italic="I", italicBold="BI"),
     )
     load_ttf_font(
         "Gentium Book Basic",
@@ -212,13 +236,18 @@ def load_standard_open_source_fonts():
     load_ttf_font(
         "STIX",
         _suffixify(
-            "STIX", normal="-Regular", bold="-Bold", italic="-Italic", italicBold="-BoldItalic"
+            "STIX",
+            normal="-Regular",
+            bold="-Bold",
+            italic="-Italic",
+            italicBold="-BoldItalic",
         ),
     )
     load_ttf_font("Cantarell", _suffixify("Cantarell", normal="-Regular", bold="-Bold"))
 
 
-def load_system_fonts():
+def load_system_fonts() -> None:
+    """Load fonts that are installed on the system."""
     from matplotlib.font_manager import findSystemFonts
 
     fonts = findSystemFonts()
@@ -227,7 +256,8 @@ def load_system_fonts():
         try_load_font_mpl(family)
 
 
-def try_load_font_mpl(name):
+def try_load_font_mpl(name: str) -> None:
+    """Try to load a font using matplotlib."""
     try:
         from matplotlib.font_manager import FontManager
     except ImportError:
@@ -257,7 +287,7 @@ def try_load_font_mpl(name):
     )
 
 
-def get_font_family(path):
+def get_font_family(path: str) -> str:
     """Get the short name from the font's names table"""
     name = ""
     family = ""
@@ -281,14 +311,13 @@ def get_font_family(path):
     return family
 
 
-def add_font_directory(directory, walk=True):
+def add_font_directory(directory, walk: bool = True) -> None:
     directory = os.path.expanduser(directory)
     all_dirs = [directory]
     if walk:
         for current, dirs, _ in os.walk(directory):
             all_dirs += [os.path.join(current, d) for d in dirs]
     rl_config.TTFSearchPath = tuple(list(rl_config.TTFSearchPath) + all_dirs)
-    # print(rl_config.TTFSearchPath)
 
 
 # Hack to browse through all directories in /usr/share/fonts

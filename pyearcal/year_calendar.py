@@ -1,10 +1,13 @@
 from __future__ import division, absolute_import
+from datetime import date
 
 import logging
 
 from calendar import Calendar
+from typing import Collection
 
 import PIL
+from pyearcal.l10n.default import Locale
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import cm, mm
@@ -51,7 +54,14 @@ class YearCalendar(object):
 
     """
 
-    def __init__(self, year, pictures, locale=DefaultLocale(), special_days=[], **kwargs):
+    def __init__(
+        self,
+        year: int,
+        pictures,
+        locale: Locale = DefaultLocale(),
+        special_days: Collection[date] = (),
+        **kwargs
+    ):
         """Constructor with all initialization.
 
         :param year: The year in YYYY format.
@@ -65,9 +75,11 @@ class YearCalendar(object):
         self.special_days = special_days
 
         self.scaling = kwargs.get("scaling", "squarecrop")
-        self.holidays = kwargs.get("holidays", self.locale.holidays(self.year))
+        self.holidays = kwargs.get("holidays", self.locale.get_holidays(self.year))
         self.pagesize = kwargs.get("pagesize", A4)
-        self.margins = kwargs.get("margins", (1.33 * cm,) * 4)  # top, right, bottom, left
+        self.margins = kwargs.get(
+            "margins", (1.33 * cm,) * 4
+        )  # top, right, bottom, left
 
         self.max_table_height = kwargs.get("max_table_height", self.content_height / 4)
 
@@ -85,13 +97,21 @@ class YearCalendar(object):
         self.week_color = kwargs.get("week_color", colors.Color(0.2, 0.2, 0.2))
         self.week_bgcolor = kwargs.get("week_bgcolor", colors.white)
         self.weekend_color = kwargs.get("weekend_color", colors.white)
-        self.weekend_bgcolor = kwargs.get("weekend_bgcolor", colors.Color(0.7, 0.7, 0.7))
+        self.weekend_bgcolor = kwargs.get(
+            "weekend_bgcolor", colors.Color(0.7, 0.7, 0.7)
+        )
         self.holiday_color = kwargs.get("holiday_color", self.weekend_color)
-        self.holiday_bgcolor = kwargs.get("holiday_bgcolor", colors.Color(0.4, 0.4, 0.4))
+        self.holiday_bgcolor = kwargs.get(
+            "holiday_bgcolor", colors.Color(0.4, 0.4, 0.4)
+        )
         self.special_day_color = kwargs.get("special_day_color", colors.white)
-        self.special_day_bgcolor = kwargs.get("special_day_bgcolor", colors.Color(0.2, 0.2, 0.2))
+        self.special_day_bgcolor = kwargs.get(
+            "special_day_bgcolor", colors.Color(0.2, 0.2, 0.2)
+        )
 
-        self.include_year_in_month_name = kwargs.get("include_year_in_month_name", False)
+        self.include_year_in_month_name = kwargs.get(
+            "include_year_in_month_name", False
+        )
 
         # Initialize calendar
         self._calendar = Calendar(self.locale.first_day_of_week)
@@ -102,7 +122,9 @@ class YearCalendar(object):
         from base64 import b64encode
 
         html = "<div>"
-        html += "<div style='font-size:124%'>Calendar for year {0}</div>".format(self.year)
+        html += "<div style='font-size:124%'>Calendar for year {0}</div>".format(
+            self.year
+        )
         html += "<div>"
         thumb_size = 64
         for i, image in enumerate(self.pictures):
@@ -165,18 +187,28 @@ class YearCalendar(object):
                     table_style.add(
                         "BACKGROUND", (column, row), (column, row), self.weekend_bgcolor
                     )
-                    table_style.add("TEXTCOLOR", (column, row), (column, row), self.weekend_color)
+                    table_style.add(
+                        "TEXTCOLOR", (column, row), (column, row), self.weekend_color
+                    )
                 if day in self.holidays:
                     table_style.add(
                         "BACKGROUND", (column, row), (column, row), self.holiday_bgcolor
                     )
-                    table_style.add("TEXTCOLOR", (column, row), (column, row), self.holiday_color)
+                    table_style.add(
+                        "TEXTCOLOR", (column, row), (column, row), self.holiday_color
+                    )
                 if day in self.special_days:
                     table_style.add(
-                        "BACKGROUND", (column, row), (column, row), self.special_day_bgcolor
+                        "BACKGROUND",
+                        (column, row),
+                        (column, row),
+                        self.special_day_bgcolor,
                     )
                     table_style.add(
-                        "TEXTCOLOR", (column, row), (column, row), self.special_day_color
+                        "TEXTCOLOR",
+                        (column, row),
+                        (column, row),
+                        self.special_day_color,
                     )
 
     def _scale_picture(self, image, max_picture_height):
@@ -244,9 +276,13 @@ class YearCalendar(object):
         for padding in ("TOP", "RIGHT", "BOTTOM", "LEFT"):
             style.add(padding + "PADDING", (0, 0), (-1, -1), self.cell_padding)
         for position in ("BEFORE", "AFTER", "ABOVE", "BELOW"):
-            style.add("LINE" + position, (0, 0), (-1, -1), self.cell_spacing / 2, colors.white)
+            style.add(
+                "LINE" + position, (0, 0), (-1, -1), self.cell_spacing / 2, colors.white
+            )
 
-        font_name = font_loader.get_font_name(self.cell_font_name, self.cell_font_variant)
+        font_name = font_loader.get_font_name(
+            self.cell_font_name, self.cell_font_variant
+        )
         style.add("FONT", (0, 0), (-1, -1), font_name, self.cell_font_size)
         style.add("ALIGN", (0, 0), (-1, -1), "LEFT")
         style.add("VALIGN", (0, 0), (-1, -1), "MIDDLE")
@@ -262,8 +298,13 @@ class YearCalendar(object):
         table.drawOn(self.canvas, self.margins[3], self.margins[2])
 
         # Render title
-        title_position = (self.margins[3], self.margins[2] + table_height + self.title_margin)
-        self.set_font(self.title_font_name, self.title_font_size, variant=self.title_font_variant)
+        title_position = (
+            self.margins[3],
+            self.margins[2] + table_height + self.title_margin,
+        )
+        self.set_font(
+            self.title_font_name, self.title_font_size, variant=self.title_font_variant
+        )
         self.canvas.drawString(
             title_position[0],
             title_position[1],
@@ -272,7 +313,11 @@ class YearCalendar(object):
 
         # Render picture
         self._render_picture(
-            month, self.content_height - self.title_font_size - 2 * self.title_margin - table_height
+            month,
+            self.content_height
+            - self.title_font_size
+            - 2 * self.title_margin
+            - table_height,
         )
         self.canvas.showPage()
 

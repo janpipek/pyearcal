@@ -26,13 +26,18 @@ def load_special_days(path, year):
 @click.command()
 @click.argument("output", default="calendar.pdf")
 @click.option("-s", "--source", type=click.Path(), default=".")
-@click.option("-l", "--locale", type=click.Choice(["en", "cs", "it", "sk"]), default="en")
+@click.option(
+    "-l", "--locale", type=click.Choice(["en", "cs", "it", "sk"]), default="en"
+)
 @click.option("-y", "--year", default=date.today().year + 1, type=int)
 @click.option("-f", "--font", type=str)
 @click.option("-d", "--special-days", type=str)
 @click.option("--sorted/--unsorted", default=False)
 @click.option("-v", "--verbose", count=True)
-def run(output, source, locale, year, special_days=None, font=None, sorted=False, verbose=0):
+def run(
+    output, source, locale, year, special_days=None, font=None, sorted=False, verbose=0
+):
+    """Generate year calendar."""
     if verbose:
         if verbose == 1:
             logging.basicConfig(level=logging.INFO)

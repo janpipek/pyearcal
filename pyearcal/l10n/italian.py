@@ -54,7 +54,7 @@ class ItalianLocale(DefaultLocale):
     def first_day_of_week(self):
         return calendar.MONDAY
 
-    def holidays(self, year):
+    def get_holidays(self, year):
         """Italian holidays for a selected year.
 
         Info taken from:
@@ -62,7 +62,7 @@ class ItalianLocale(DefaultLocale):
         - http://www.qppstudio.net/publicholidays2015/italy.htm
         - https://it.wikipedia.org/wiki/Pentecoste
         """
-        hols = super(ItalianLocale, self).holidays(year)
+        hols = super().get_holidays(year)
         hols.append(date(year, 1, 1))  # New Year
         hols.append(date(year, 1, 6))  # Epiphany
         hols.append(date(year, 4, 25))  # Liberation Day (St. Mark)
@@ -73,7 +73,7 @@ class ItalianLocale(DefaultLocale):
         if self.city == "roma":
             hols.append(date(year, 6, 29))  # St. Peter & Paul
         if self.city == "palermo":
-            hols.append(data(year, 7, 15))  # St. Rosalia
+            hols.append(date(year, 7, 15))  # St. Rosalia
         hols.append(date(year, 8, 15))  # Assumption of Mary
         if self.city == "napoli":
             hols.append(date(year, 9, 19))  # St. Gennaro

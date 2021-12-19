@@ -27,8 +27,8 @@ class CzechLocale(DefaultLocale):
     def first_day_of_week(self):
         return calendar.MONDAY
 
-    def holidays(self, year):
-        hols = super(CzechLocale, self).holidays(year)
+    def get_holidays(self, year):
+        hols = super().get_holidays(year)
         hols.append(date(year, 1, 1))
         hols.append(date(year, 5, 1))
         hols.append(date(year, 5, 8))
