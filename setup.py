@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 options = dict(
     name="pyearcal",
-    version="2021.0",
+    version="2021.0.1",
     packages=find_packages(),
     license="MIT",
     description="Year calendar creation in Python",

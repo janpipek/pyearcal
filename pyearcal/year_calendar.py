@@ -310,7 +310,9 @@ class YearCalendar(object):
         self.canvas.drawString(
             title_position[0],
             title_position[1],
-            self.locale.month_title(self.year, month, self.include_year_in_month_name),
+            self.locale.get_month_title(
+                self.year, month, self.include_year_in_month_name
+            ),
         )
 
         # Render picture

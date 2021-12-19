@@ -14,12 +14,9 @@ import os
 from typing import Dict, List
 import warnings
 
-from matplotlib import font_manager
-
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab import rl_config
-
 from fontTools import ttLib
 
 # Define font variant names
@@ -125,7 +122,7 @@ def get_font_name(
         else:
             key = _get_font_name(font_name, variant=NORMAL)
             if key not in pdfmetrics.getRegisteredFontNames():
-                raise FontNotFound(f"Font '{font_manager}' does not exist.")
+                raise FontNotFound(f"Font '{font_name}' does not exist.")
             else:
                 print(
                     f"Font '{font_name}', variant '{variant}' "
