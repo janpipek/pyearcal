@@ -2,8 +2,11 @@
 *.pyc
 *.egg-info
 .flickr-download/
+build/
 dist/
 .spyderproject
 .idea
 .spyderworkspace
 .venv
+__py_cache__
+.mypy_cache
