@@ -9,6 +9,7 @@ options = dict(
     license="MIT",
     description="Year calendar creation in Python",
     long_description=open("README.md").read(),
+    long_description_content_type="text/markdown",
     author="Jan Pipek",
     author_email="jan.pipek@gmail.com",
     url="https://github.com/janpipek/pyearcal",
