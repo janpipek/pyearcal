@@ -9,7 +9,13 @@ Generate your year calendar in Python. The result is a PDF file with 12 pages co
 * reportlab
 * DejaVu fonts (if you want pyearcal work out of the box)
 * BeautifulSoup (optional)
-* Python 3.6+
+* Python 3.8+
+
+### Installation
+
+```
+pipx install pyearcal
+```
 
 ### Usage
 
