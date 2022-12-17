@@ -1,0 +1,39 @@
+[project]
+name = "pyearcal"
+version = "2022.0.0"
+description = "Year calendar creation in Python"
+readme = "README.md"
+requires-python = "~=3.8"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Jan Pipek", email="jan.pipek@gmail.com"}
+]
+dependencies = [
+    "reportlab",
+    "matplotlib",
+    "pillow",
+    "python-dateutil",
+    "click",
+    "fonttools"
+]
+
+[build-system]
+requires = ["setuptools>=65.0", "build"]
+build-backend = "setuptools.build_meta"
+
+[tool.black]
+line-length = 100
+target-version = ['py38', 'py39', 'py310']
+include = '\.pyi?$'
+
+[tool.mypy]
+ignore_missing_imports = true
+
+[tool.isort]
+profile = "black"
+
+[project.optional-dependencies]
+flickr = ["beautifulsoup4", "requests"]
+
+[project.scripts]
+pyearcal = "pyearcal.cli:run"
