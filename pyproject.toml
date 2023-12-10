@@ -13,6 +13,7 @@ dependencies = [
     "matplotlib",
     "pillow",
     "python-dateutil",
+    "rich",
     "click",
     "fonttools"
 ]

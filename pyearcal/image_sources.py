@@ -2,11 +2,11 @@ import abc
 import os
 import fnmatch
 import random
-from typing import Dict, Iterable
+from typing import Dict, Iterator, Iterable
 from collections import OrderedDict
 
 
-class ImageSource(abc.ABC):
+class ImageSource(abc.ABC, Iterable[str]):
     """Base class for image sources."""
 
     def __getitem__(self, index: int) -> str:
@@ -14,7 +14,7 @@ class ImageSource(abc.ABC):
 
     images: Dict[int, str]
 
-    def __iter__(self) -> Iterable[str]:
+    def __iter__(self) -> Iterator[str]:
         for image in self.images.values():
             yield image
 

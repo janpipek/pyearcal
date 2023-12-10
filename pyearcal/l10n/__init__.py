@@ -1,11 +1,11 @@
-from .default import DefaultLocale
+from .default import DefaultLocale, Locale
 
 from .czech import CzechLocale
 from .slovak import SlovakLocale
 from .italian import ItalianLocale
 
 
-def get_locale(locale):
+def get_locale(locale: str) -> Locale:
     if locale == "en":
         return DefaultLocale()
     elif locale == "cs":

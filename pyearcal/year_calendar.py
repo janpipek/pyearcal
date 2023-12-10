@@ -4,7 +4,8 @@ from datetime import date
 import logging
 
 from calendar import Calendar
-from typing import Collection
+from collections.abc import Collection
+from typing import Any, Iterable
 
 import PIL
 from pyearcal.l10n.default import Locale
@@ -50,14 +51,15 @@ class YearCalendar(object):
     - title_font_size: Month title font size in pt (default 24)
     - title_font_variant: Month title font variant (see font_loader)
 
-    - include_year_in_month_name
+    - include_year_in_month_name: Whether to include year in month title (default: False)
 
     """
 
     def __init__(
         self,
         year: int,
-        pictures,
+        pictures: Iterable[str] = (),
+        *,
         locale: Locale = DefaultLocale(),
         special_days: Collection[date] = (),
         **kwargs,
@@ -75,6 +77,8 @@ class YearCalendar(object):
         self.special_days = special_days
 
         self.scaling = kwargs.get("scaling", "squarecrop")
+        self.image_dpi: int = kwargs.get("image_dpi", 72)
+
         self.holidays = kwargs.get("holidays", self.locale.get_holidays(self.year))
         self.pagesize = kwargs.get("pagesize", A4)
         self.margins = kwargs.get(
@@ -213,15 +217,22 @@ class YearCalendar(object):
                         self.special_day_color,
                     )
 
-    def _scale_picture(self, image, max_picture_height):
+    def _scale_picture(
+        self, image, max_picture_height: float
+    ) -> tuple[Any, float, float]:
         """Apply the scaling algorithm.
 
         :param image: PIL object
-        :max_picture_height: the vertical area that can be occupied
+        :max_picture_height: the vertical area that can be occupied (in points)
 
-        Return tuple (transformed PIL image object, PDF width, PDF height)
+        Return tuple (transformed PIL image object, width in points, height in points)
         """
+        # Current dimensions in pixels
         width, height = image.size
+
+        # Max dimensions in pixels
+        max_width_px = self.content_width * self.image_dpi / 72
+        max_height_px = max_picture_height * self.image_dpi / 72
 
         if self.scaling == "squarecrop":
             crop_size = min(width, height)
@@ -231,24 +242,30 @@ class YearCalendar(object):
                 (width - crop_size) // 2 + crop_size,
                 (height - crop_size) // 2 + crop_size,
             )
-            cropped = image.crop(crop_coords)
-
-            size = min(self.content_width, max_picture_height)
-            return cropped, size, size
+            image = image.crop(crop_coords)
+            max_side_px = int(min(max_width_px, max_height_px))
+            target_size_px = (max_side_px, max_side_px)
 
         elif self.scaling == "fit":
-            max_width = self.content_width
-            max_height = max_picture_height
-            if width * max_height > height * max_width:
-                height = max_width * height / width
-                width = max_width
+            if width * max_height_px > height * max_width_px:
+                height = max_width_px * height / width
+                width = max_width_px
             else:
-                width = max_height * width / height
-                height = max_height
-            return image, width, height
+                width = max_height_px * width / height
+                height = max_height_px
+
+            target_size_px = (int(width), int(height))
 
         else:
-            raise Exception("Unknown scaling: %s" % self.scaling)
+            raise ValueError(f"Unknown scaling: {self.scaling}")
+
+        # Scale the image itself
+        image = image.resize(target_size_px)
+
+        # Compute the dimensions for PDF
+        target_size = [size / self.image_dpi * 72 for size in target_size_px]
+
+        return image, target_size[0], target_size[1]
 
     def _render_picture(self, month, max_picture_height):
         """Draw the picture.
