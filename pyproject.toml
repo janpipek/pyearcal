@@ -1,6 +1,6 @@
 [project]
 name = "pyearcal"
-version = "2022.0.0"
+version = "2023.0.0"
 description = "Year calendar creation in Python"
 readme = "README.md"
 requires-python = "~=3.8"
