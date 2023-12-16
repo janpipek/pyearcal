@@ -14,7 +14,8 @@ dependencies = [
     "pillow",
     "python-dateutil",
     "click",
-    "fonttools"
+    "fonttools",
+    "workalendar",
 ]
 
 [build-system]
