@@ -4,18 +4,15 @@ pyearcal
 ========
 Generate your year calendar in Python. The result is a PDF file with 12 pages containing an image and a grid of days.
 
-### Requirements
-* pillow or PIL
-* reportlab
-* DejaVu fonts (if you want pyearcal work out of the box)
-* BeautifulSoup (optional)
-* Python 3.8+
-
 ### Installation
 
+We recommend using [uv tool](https://uvtool.readthedocs.io/en/latest/) to use and/or install pyearcal as a tool.
+
 ```
-pipx install pyearcal
+uv tool install pyearcal
 ```
+
+or you can use it without installation (via `uvx`)
 
 ### Usage
 
@@ -29,7 +26,7 @@ pipx install pyearcal
 ### Usage of the script
 
 ```
-Usage: pyearcal [OPTIONS] [OUTPUT]
+Usage: uvx pyearcal [OPTIONS] [OUTPUT]
 
 Options:
   -s, --source PATH
