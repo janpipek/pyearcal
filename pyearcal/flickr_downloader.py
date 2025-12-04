@@ -17,7 +17,7 @@ class FlickrDownloader(SortedImageDirectory):
 
     def download_images(self, number: int = 12) -> None:
         response = requests.get(
-            "http://api.flickr.com/services/feeds/photos_public.gne?tags="
+            "https://api.flickr.com/services/feeds/photos_public.gne?tags="
             + self.keyword
             + "&lang=en-us&format=rss_200"
         )
